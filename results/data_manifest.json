@@ -1,0 +1,494 @@
+{
+  "files": [
+    {
+      "date": "2013-11-01",
+      "input_name": "sms-call-internet-mi-2013-11-01.txt",
+      "input_bytes": 322874887,
+      "md5": "658c49f8e3c7910bd3bb2bafbf62cdce",
+      "raw_rows": 4842625,
+      "missing_square_time_bins": 54
+    },
+    {
+      "date": "2013-11-02",
+      "input_name": "sms-call-internet-mi-2013-11-02.txt",
+      "input_bytes": 315164060,
+      "md5": "d90f3512c4f278f78d875fb49fcb7191",
+      "raw_rows": 4745086,
+      "missing_square_time_bins": 98
+    },
+    {
+      "date": "2013-11-03",
+      "input_name": "sms-call-internet-mi-2013-11-03.txt",
+      "input_bytes": 313058344,
+      "md5": "71bde0827182bb45ce6f4c708fe6b42e",
+      "raw_rows": 4722579,
+      "missing_square_time_bins": 145
+    },
+    {
+      "date": "2013-11-04",
+      "input_name": "sms-call-internet-mi-2013-11-04.txt",
+      "input_bytes": 361097689,
+      "md5": "151f85ab92fc0fea449ff19cb7e50a0a",
+      "raw_rows": 5639488,
+      "missing_square_time_bins": 127
+    },
+    {
+      "date": "2013-11-05",
+      "input_name": "sms-call-internet-mi-2013-11-05.txt",
+      "input_bytes": 372894401,
+      "md5": "f8f22dfdce95bf66d6fa9f699afbdf5e",
+      "raw_rows": 5874140,
+      "missing_square_time_bins": 113
+    },
+    {
+      "date": "2013-11-06",
+      "input_name": "sms-call-internet-mi-2013-11-06.txt",
+      "input_bytes": 374625924,
+      "md5": "1c4e7de6a559357560927796b5c63c06",
+      "raw_rows": 5912097,
+      "missing_square_time_bins": 123
+    },
+    {
+      "date": "2013-11-07",
+      "input_name": "sms-call-internet-mi-2013-11-07.txt",
+      "input_bytes": 373036285,
+      "md5": "dc0fac4c7fccb4c3328a77f450230c5c",
+      "raw_rows": 5886883,
+      "missing_square_time_bins": 127
+    },
+    {
+      "date": "2013-11-08",
+      "input_name": "sms-call-internet-mi-2013-11-08.txt",
+      "input_bytes": 376123111,
+      "md5": "e2c02fde5673256145b29eb73321ca12",
+      "raw_rows": 5918856,
+      "missing_square_time_bins": 117
+    },
+    {
+      "date": "2013-11-09",
+      "input_name": "sms-call-internet-mi-2013-11-09.txt",
+      "input_bytes": 332440742,
+      "md5": "ceee41ef748750475d57f16770b0abe0",
+      "raw_rows": 5052416,
+      "missing_square_time_bins": 120
+    },
+    {
+      "date": "2013-11-10",
+      "input_name": "sms-call-internet-mi-2013-11-10.txt",
+      "input_bytes": 314441422,
+      "md5": "4b7a506876b06565272af93048aa54b8",
+      "raw_rows": 4731582,
+      "missing_square_time_bins": 125
+    },
+    {
+      "date": "2013-11-11",
+      "input_name": "sms-call-internet-mi-2013-11-11.txt",
+      "input_bytes": 351945243,
+      "md5": "748eee94e1924f95d323f3df1dd6f009",
+      "raw_rows": 5478993,
+      "missing_square_time_bins": 115
+    },
+    {
+      "date": "2013-11-12",
+      "input_name": "sms-call-internet-mi-2013-11-12.txt",
+      "input_bytes": 358347374,
+      "md5": "e70f999b213bfe38b36c956cf0d1daf4",
+      "raw_rows": 5597591,
+      "missing_square_time_bins": 162
+    },
+    {
+      "date": "2013-11-13",
+      "input_name": "sms-call-internet-mi-2013-11-13.txt",
+      "input_bytes": 362539357,
+      "md5": "f9d8e9e15d3b0ed82792dd9fb77f1ec2",
+      "raw_rows": 5689517,
+      "missing_square_time_bins": 163
+    },
+    {
+      "date": "2013-11-14",
+      "input_name": "sms-call-internet-mi-2013-11-14.txt",
+      "input_bytes": 363552765,
+      "md5": "7b8e81a994c7c3f0d17338e42be76944",
+      "raw_rows": 5703373,
+      "missing_square_time_bins": 159
+    },
+    {
+      "date": "2013-11-15",
+      "input_name": "sms-call-internet-mi-2013-11-15.txt",
+      "input_bytes": 364814415,
+      "md5": "51a465a1b72ec28cfa34cd27ecd40cb2",
+      "raw_rows": 5708802,
+      "missing_square_time_bins": 165
+    },
+    {
+      "date": "2013-11-16",
+      "input_name": "sms-call-internet-mi-2013-11-16.txt",
+      "input_bytes": 321048116,
+      "md5": "f319979979e14164667d7606a3d11c57",
+      "raw_rows": 4847779,
+      "missing_square_time_bins": 172
+    },
+    {
+      "date": "2013-11-17",
+      "input_name": "sms-call-internet-mi-2013-11-17.txt",
+      "input_bytes": 307197776,
+      "md5": "c66a2d9873ef54812a4a17444cba7451",
+      "raw_rows": 4611954,
+      "missing_square_time_bins": 186
+    },
+    {
+      "date": "2013-11-18",
+      "input_name": "sms-call-internet-mi-2013-11-18.txt",
+      "input_bytes": 348325345,
+      "md5": "3455490d465be13d6a107e5982672008",
+      "raw_rows": 5417835,
+      "missing_square_time_bins": 174
+    },
+    {
+      "date": "2013-11-19",
+      "input_name": "sms-call-internet-mi-2013-11-19.txt",
+      "input_bytes": 356545029,
+      "md5": "f9d64c99a62e560e754dbe40c0510786",
+      "raw_rows": 5577668,
+      "missing_square_time_bins": 161
+    },
+    {
+      "date": "2013-11-20",
+      "input_name": "sms-call-internet-mi-2013-11-20.txt",
+      "input_bytes": 360144384,
+      "md5": "ea4904a581e9a829cebf2fdbaf679f25",
+      "raw_rows": 5643712,
+      "missing_square_time_bins": 175
+    },
+    {
+      "date": "2013-11-21",
+      "input_name": "sms-call-internet-mi-2013-11-21.txt",
+      "input_bytes": 358700264,
+      "md5": "d2943e3d4f31a5d8f7575796d3b47368",
+      "raw_rows": 5616011,
+      "missing_square_time_bins": 147
+    },
+    {
+      "date": "2013-11-22",
+      "input_name": "sms-call-internet-mi-2013-11-22.txt",
+      "input_bytes": 360316105,
+      "md5": "07a02618f46af85618247104bc46e974",
+      "raw_rows": 5634579,
+      "missing_square_time_bins": 153
+    },
+    {
+      "date": "2013-11-23",
+      "input_name": "sms-call-internet-mi-2013-11-23.txt",
+      "input_bytes": 317406788,
+      "md5": "c0f44412f4d49cd7fa0edfff31ecd887",
+      "raw_rows": 4779119,
+      "missing_square_time_bins": 174
+    },
+    {
+      "date": "2013-11-24",
+      "input_name": "sms-call-internet-mi-2013-11-24.txt",
+      "input_bytes": 303987293,
+      "md5": "8bffcfdffdfa73a18c9bcc64bf1de2b5",
+      "raw_rows": 4548405,
+      "missing_square_time_bins": 173
+    },
+    {
+      "date": "2013-11-25",
+      "input_name": "sms-call-internet-mi-2013-11-25.txt",
+      "input_bytes": 345276784,
+      "md5": "9865c11cbfc3c907f8bce2eaa10f448c",
+      "raw_rows": 5365586,
+      "missing_square_time_bins": 183
+    },
+    {
+      "date": "2013-11-26",
+      "input_name": "sms-call-internet-mi-2013-11-26.txt",
+      "input_bytes": 352033486,
+      "md5": "9a878cf4c279094446e5fb8f009f99bc",
+      "raw_rows": 5491322,
+      "missing_square_time_bins": 390
+    },
+    {
+      "date": "2013-11-27",
+      "input_name": "sms-call-internet-mi-2013-11-27.txt",
+      "input_bytes": 349777785,
+      "md5": "a7d1abf21b6b11aa1725588d16d95c1f",
+      "raw_rows": 5448926,
+      "missing_square_time_bins": 253
+    },
+    {
+      "date": "2013-11-28",
+      "input_name": "sms-call-internet-mi-2013-11-28.txt",
+      "input_bytes": 350899256,
+      "md5": "b47f3fa389889b9c804039c75968d85d",
+      "raw_rows": 5472300,
+      "missing_square_time_bins": 561
+    },
+    {
+      "date": "2013-11-29",
+      "input_name": "sms-call-internet-mi-2013-11-29.txt",
+      "input_bytes": 351607243,
+      "md5": "4ee896fb8afb2fb1d7569119533d75c0",
+      "raw_rows": 5482752,
+      "missing_square_time_bins": 1101
+    },
+    {
+      "date": "2013-11-30",
+      "input_name": "sms-call-internet-mi-2013-11-30.txt",
+      "input_bytes": 311422116,
+      "md5": "54ae3a2aeb373d3cbd031ba32dc8e778",
+      "raw_rows": 4666027,
+      "missing_square_time_bins": 1225
+    },
+    {
+      "date": "2013-12-01",
+      "input_name": "sms-call-internet-mi-2013-12-01.txt",
+      "input_bytes": 298715145,
+      "md5": "785eed3199d70341ad3eb427ab157297",
+      "raw_rows": 4438331,
+      "missing_square_time_bins": 1365
+    },
+    {
+      "date": "2013-12-02",
+      "input_name": "sms-call-internet-mi-2013-12-02.txt",
+      "input_bytes": 341919663,
+      "md5": "6ad0d9bc559c22efbfe1bfe33619b393",
+      "raw_rows": 5320367,
+      "missing_square_time_bins": 2340
+    },
+    {
+      "date": "2013-12-03",
+      "input_name": "sms-call-internet-mi-2013-12-03.txt",
+      "input_bytes": 353947238,
+      "md5": "a253615038abf0e191a1d3bb03d26aa2",
+      "raw_rows": 5545148,
+      "missing_square_time_bins": 2959
+    },
+    {
+      "date": "2013-12-04",
+      "input_name": "sms-call-internet-mi-2013-12-04.txt",
+      "input_bytes": 352032545,
+      "md5": "e4abdf54f50618a0d8fcf2db1cf18817",
+      "raw_rows": 5501001,
+      "missing_square_time_bins": 3140
+    },
+    {
+      "date": "2013-12-05",
+      "input_name": "sms-call-internet-mi-2013-12-05.txt",
+      "input_bytes": 353519447,
+      "md5": "42004492d87a1b76a91ad2e6b2e89f52",
+      "raw_rows": 5523429,
+      "missing_square_time_bins": 3258
+    },
+    {
+      "date": "2013-12-06",
+      "input_name": "sms-call-internet-mi-2013-12-06.txt",
+      "input_bytes": 354028475,
+      "md5": "6a236e67403ced6fa303f603dd0b80e6",
+      "raw_rows": 5525307,
+      "missing_square_time_bins": 3406
+    },
+    {
+      "date": "2013-12-07",
+      "input_name": "sms-call-internet-mi-2013-12-07.txt",
+      "input_bytes": 307172220,
+      "md5": "07e1b99c3cea4adf0ce07028ebbff601",
+      "raw_rows": 4590100,
+      "missing_square_time_bins": 3615
+    },
+    {
+      "date": "2013-12-08",
+      "input_name": "sms-call-internet-mi-2013-12-08.txt",
+      "input_bytes": 293663723,
+      "md5": "aa44fac0820e01a5c0268df7f4547cb0",
+      "raw_rows": 4357172,
+      "missing_square_time_bins": 3706
+    },
+    {
+      "date": "2013-12-09",
+      "input_name": "sms-call-internet-mi-2013-12-09.txt",
+      "input_bytes": 338963272,
+      "md5": "dc35aa2f908f60e6fc45663379b57dc8",
+      "raw_rows": 5252874,
+      "missing_square_time_bins": 3654
+    },
+    {
+      "date": "2013-12-10",
+      "input_name": "sms-call-internet-mi-2013-12-10.txt",
+      "input_bytes": 349269739,
+      "md5": "89f524e4039f111c2b0eec8667b9c33b",
+      "raw_rows": 5455708,
+      "missing_square_time_bins": 3562
+    },
+    {
+      "date": "2013-12-11",
+      "input_name": "sms-call-internet-mi-2013-12-11.txt",
+      "input_bytes": 351378560,
+      "md5": "cd7581d7d586c4741866976c5946481b",
+      "raw_rows": 5483990,
+      "missing_square_time_bins": 3704
+    },
+    {
+      "date": "2013-12-12",
+      "input_name": "sms-call-internet-mi-2013-12-12.txt",
+      "input_bytes": 353930588,
+      "md5": "79adf11aa1acb2863a44cfbc601a6ba6",
+      "raw_rows": 5538445,
+      "missing_square_time_bins": 3637
+    },
+    {
+      "date": "2013-12-13",
+      "input_name": "sms-call-internet-mi-2013-12-13.txt",
+      "input_bytes": 351454734,
+      "md5": "07d9d9b536ad330841c60659e39f09c0",
+      "raw_rows": 5467246,
+      "missing_square_time_bins": 3631
+    },
+    {
+      "date": "2013-12-14",
+      "input_name": "sms-call-internet-mi-2013-12-14.txt",
+      "input_bytes": 310080286,
+      "md5": "ad7ab3089c14b110786d86f8a9be4c91",
+      "raw_rows": 4634809,
+      "missing_square_time_bins": 3753
+    },
+    {
+      "date": "2013-12-15",
+      "input_name": "sms-call-internet-mi-2013-12-15.txt",
+      "input_bytes": 296653479,
+      "md5": "c227bcd0c387de3d88c3b52fff1512ca",
+      "raw_rows": 4412002,
+      "missing_square_time_bins": 3815
+    },
+    {
+      "date": "2013-12-16",
+      "input_name": "sms-call-internet-mi-2013-12-16.txt",
+      "input_bytes": 342672644,
+      "md5": "ccd799e2f437f7229fbea070f22c7ea3",
+      "raw_rows": 5320759,
+      "missing_square_time_bins": 3623
+    },
+    {
+      "date": "2013-12-17",
+      "input_name": "sms-call-internet-mi-2013-12-17.txt",
+      "input_bytes": 351108029,
+      "md5": "0c4d4cafc22cb209e2acb88782438482",
+      "raw_rows": 5476473,
+      "missing_square_time_bins": 3455
+    },
+    {
+      "date": "2013-12-18",
+      "input_name": "sms-call-internet-mi-2013-12-18.txt",
+      "input_bytes": 350956602,
+      "md5": "cf67bd1a84432cc6b4800488d2c5d166",
+      "raw_rows": 5472133,
+      "missing_square_time_bins": 3582
+    },
+    {
+      "date": "2013-12-19",
+      "input_name": "sms-call-internet-mi-2013-12-19.txt",
+      "input_bytes": 356429243,
+      "md5": "4dc65086f76e8ec6eb08f9dee4f60586",
+      "raw_rows": 5572121,
+      "missing_square_time_bins": 3719
+    },
+    {
+      "date": "2013-12-20",
+      "input_name": "sms-call-internet-mi-2013-12-20.txt",
+      "input_bytes": 349357045,
+      "md5": "4b8b24622a83d0a0944155a429411cab",
+      "raw_rows": 5410674,
+      "missing_square_time_bins": 4603
+    },
+    {
+      "date": "2013-12-21",
+      "input_name": "sms-call-internet-mi-2013-12-21.txt",
+      "input_bytes": 313594501,
+      "md5": "c3acc3d3cf7f946f32b283bfb823af8a",
+      "raw_rows": 4705979,
+      "missing_square_time_bins": 4714
+    },
+    {
+      "date": "2013-12-22",
+      "input_name": "sms-call-internet-mi-2013-12-22.txt",
+      "input_bytes": 301004169,
+      "md5": "355c8c198af7e372ba9e3d7b7f01a3b5",
+      "raw_rows": 4482939,
+      "missing_square_time_bins": 5015
+    },
+    {
+      "date": "2013-12-23",
+      "input_name": "sms-call-internet-mi-2013-12-23.txt",
+      "input_bytes": 326617616,
+      "md5": "1dd238f0b3111d75c9bae8654617db18",
+      "raw_rows": 4986627,
+      "missing_square_time_bins": 4752
+    },
+    {
+      "date": "2013-12-24",
+      "input_name": "sms-call-internet-mi-2013-12-24.txt",
+      "input_bytes": 328653739,
+      "md5": "6ea08442917409774e451d03ebd98332",
+      "raw_rows": 5014066,
+      "missing_square_time_bins": 6658
+    },
+    {
+      "date": "2013-12-25",
+      "input_name": "sms-call-internet-mi-2013-12-25.txt",
+      "input_bytes": 324587326,
+      "md5": "9ad51e1d206b52a54e3d6f95c31e1170",
+      "raw_rows": 4907775,
+      "missing_square_time_bins": 6958
+    },
+    {
+      "date": "2013-12-26",
+      "input_name": "sms-call-internet-mi-2013-12-26.txt",
+      "input_bytes": 281115796,
+      "md5": "ccca2ca9e50405eca22c508d4df6a57a",
+      "raw_rows": 4162680,
+      "missing_square_time_bins": 7065
+    },
+    {
+      "date": "2013-12-27",
+      "input_name": "sms-call-internet-mi-2013-12-27.txt",
+      "input_bytes": 303320719,
+      "md5": "479e93d8b6c442f0dc44085c9984ad30",
+      "raw_rows": 4547803,
+      "missing_square_time_bins": 6871
+    },
+    {
+      "date": "2013-12-28",
+      "input_name": "sms-call-internet-mi-2013-12-28.txt",
+      "input_bytes": 285311365,
+      "md5": "cd02c07e7c956b0abaee6495cf6fe830",
+      "raw_rows": 4204331,
+      "missing_square_time_bins": 6950
+    },
+    {
+      "date": "2013-12-29",
+      "input_name": "sms-call-internet-mi-2013-12-29.txt",
+      "input_bytes": 277460259,
+      "md5": "4d0cd54e39373db049374818174d67b9",
+      "raw_rows": 4071711,
+      "missing_square_time_bins": 6943
+    },
+    {
+      "date": "2013-12-30",
+      "input_name": "sms-call-internet-mi-2013-12-30.txt",
+      "input_bytes": 300546933,
+      "md5": "9230d450b47c0aa330fc97253f67810b",
+      "raw_rows": 4508084,
+      "missing_square_time_bins": 6876
+    },
+    {
+      "date": "2013-12-31",
+      "input_name": "sms-call-internet-mi-2013-12-31.txt",
+      "input_bytes": 324184533,
+      "md5": "a1051476670422b415255f641adbe1e5",
+      "raw_rows": 4968039,
+      "missing_square_time_bins": 6884
+    }
+  ],
+  "total_bytes": 20475293422,
+  "checksum_status": "all match publisher metadata"
+}

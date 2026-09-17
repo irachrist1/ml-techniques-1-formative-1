@@ -1,0 +1,184 @@
+{
+  "config": {
+    "id": "daily_history",
+    "rationale": "After the six-hour initial run, validation RMSE was RidgeAR 159.07, LSTM 163.30 and CausalCNN 161.02. Training-only daily-lag correlation is 0.894 and weekly-lag correlation 0.952. Test a full-day history (144 steps) while retaining widths, learning rates and epoch budgets. Extend CNN dilations only as needed to cover the larger history. Identical eligibility masks keep evaluation timestamps fixed.",
+    "models": {
+      "RidgeAR": {
+        "lookback": 144,
+        "alpha": 1.0
+      },
+      "LSTM": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "CausalCNN": {
+        "lookback": 144,
+        "width": 8,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "RidgeAR",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "daily_history",
+      "config": {
+        "lookback": 144,
+        "alpha": 1.0
+      },
+      "rationale": "After the six-hour initial run, validation RMSE was RidgeAR 159.07, LSTM 163.30 and CausalCNN 161.02. Training-only daily-lag correlation is 0.894 and weekly-lag correlation 0.952. Test a full-day history (144 steps) while retaining widths, learning rates and epoch budgets. Extend CNN dilations only as needed to cover the larger history. Identical eligibility masks keep evaluation timestamps fixed.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 0.04534754199994495,
+      "parameter_count": 145,
+      "epochs_run": 0,
+      "best_epoch": null,
+      "validation": {
+        "n": 1008,
+        "mae": 106.78512600331089,
+        "rmse": 153.13440305737217,
+        "mape_percent_nonzero": 10.250478586303784,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.00010270799975842237,
+        "warm_batch_seconds_runs": [
+          0.00011633299982349854,
+          0.00010308299897587858,
+          0.00010270799975842237,
+          9.7707999884733e-05,
+          9.299999874201603e-05
+        ],
+        "single_seconds_median": 4.235400047036819e-05,
+        "single_seconds_p95": 4.677079941757256e-05
+      }
+    },
+    {
+      "model": "LSTM",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "daily_history",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "After the six-hour initial run, validation RMSE was RidgeAR 159.07, LSTM 163.30 and CausalCNN 161.02. Training-only daily-lag correlation is 0.894 and weekly-lag correlation 0.952. Test a full-day history (144 steps) while retaining widths, learning rates and epoch budgets. Extend CNN dilations only as needed to cover the larger history. Identical eligibility masks keep evaluation timestamps fixed.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 20.42918437499975,
+      "parameter_count": 1169,
+      "epochs_run": 19,
+      "best_epoch": 17,
+      "validation": {
+        "n": 1008,
+        "mae": 106.5407087876962,
+        "rmse": 160.25927674339334,
+        "mape_percent_nonzero": 8.668990580722172,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.04620479100049124,
+        "warm_batch_seconds_runs": [
+          0.046559667000110494,
+          0.04620479100049124,
+          0.04611612500048068,
+          0.04632891599976574,
+          0.04591920799975924
+        ],
+        "single_seconds_median": 0.0019306039994262392,
+        "single_seconds_p95": 0.0020303394004258734
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "daily_history",
+      "config": {
+        "lookback": 144,
+        "width": 8,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "After the six-hour initial run, validation RMSE was RidgeAR 159.07, LSTM 163.30 and CausalCNN 161.02. Training-only daily-lag correlation is 0.894 and weekly-lag correlation 0.952. Test a full-day history (144 steps) while retaining widths, learning rates and epoch budgets. Extend CNN dilations only as needed to cover the larger history. Identical eligibility masks keep evaluation timestamps fixed.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 12.874201458000243,
+      "parameter_count": 1241,
+      "epochs_run": 16,
+      "best_epoch": 12,
+      "validation": {
+        "n": 1008,
+        "mae": 106.1642565577027,
+        "rmse": 160.2808043095038,
+        "mape_percent_nonzero": 8.671127437549977,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.03166412500104343,
+        "warm_batch_seconds_runs": [
+          0.03170587500062538,
+          0.03090462499858404,
+          0.03158808299849625,
+          0.03166412500104343,
+          0.03297545799978252
+        ],
+        "single_seconds_median": 0.0002446455000608694,
+        "single_seconds_p95": 0.0003231078499993599
+      }
+    }
+  ]
+}

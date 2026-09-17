@@ -1,0 +1,184 @@
+{
+  "config": {
+    "id": "capacity",
+    "rationale": "Full-day history reduced validation RMSE to 153.13 (RidgeAR), 160.26 (LSTM), and 160.28 (CausalCNN). Test stronger regularization of correlated linear lags (alpha 10) and double neural widths (32 and 16), keeping history, learning rate and stopping budgets fixed, to assess whether limited capacity explains the remaining neural error.",
+    "models": {
+      "RidgeAR": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "LSTM": {
+        "lookback": 144,
+        "width": 32,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "CausalCNN": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "RidgeAR",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "capacity",
+      "config": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "rationale": "Full-day history reduced validation RMSE to 153.13 (RidgeAR), 160.26 (LSTM), and 160.28 (CausalCNN). Test stronger regularization of correlated linear lags (alpha 10) and double neural widths (32 and 16), keeping history, learning rate and stopping budgets fixed, to assess whether limited capacity explains the remaining neural error.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 0.250864667003043,
+      "parameter_count": 145,
+      "epochs_run": 0,
+      "best_epoch": null,
+      "validation": {
+        "n": 1008,
+        "mae": 106.06624064663019,
+        "rmse": 152.39278347095748,
+        "mape_percent_nonzero": 10.10748908586952,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.0002121669822372496,
+        "warm_batch_seconds_runs": [
+          0.00033370801247656345,
+          0.00037420899025164545,
+          0.0002121669822372496,
+          0.00018045800970867276,
+          0.00017433299217373133
+        ],
+        "single_seconds_median": 7.597950752824545e-05,
+        "single_seconds_p95": 0.0008895857536117545
+      }
+    },
+    {
+      "model": "LSTM",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "capacity",
+      "config": {
+        "lookback": 144,
+        "width": 32,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Full-day history reduced validation RMSE to 153.13 (RidgeAR), 160.26 (LSTM), and 160.28 (CausalCNN). Test stronger regularization of correlated linear lags (alpha 10) and double neural widths (32 and 16), keeping history, learning rate and stopping budgets fixed, to assess whether limited capacity explains the remaining neural error.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 18.47261595801683,
+      "parameter_count": 4385,
+      "epochs_run": 9,
+      "best_epoch": 5,
+      "validation": {
+        "n": 1008,
+        "mae": 107.61917458876601,
+        "rmse": 162.04230184252413,
+        "mape_percent_nonzero": 8.803108919383796,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.14701325001078658,
+        "warm_batch_seconds_runs": [
+          0.13353975000791252,
+          0.1052848749968689,
+          0.14701325001078658,
+          0.25291962499613874,
+          0.32363624998833984
+        ],
+        "single_seconds_median": 0.0022118544875411317,
+        "single_seconds_p95": 0.007233414406073274
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "capacity",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Full-day history reduced validation RMSE to 153.13 (RidgeAR), 160.26 (LSTM), and 160.28 (CausalCNN). Test stronger regularization of correlated linear lags (alpha 10) and double neural widths (32 and 16), keeping history, learning rate and stopping budgets fixed, to assess whether limited capacity explains the remaining neural error.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 27.231436291971477,
+      "parameter_count": 4785,
+      "epochs_run": 11,
+      "best_epoch": 7,
+      "validation": {
+        "n": 1008,
+        "mae": 106.11151574066803,
+        "rmse": 160.086951178327,
+        "mape_percent_nonzero": 8.68104070334838,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.09325225002248771,
+        "warm_batch_seconds_runs": [
+          0.04971945899887942,
+          0.06988475000252947,
+          0.09325225002248771,
+          0.11961708302260377,
+          0.10057491701445542
+        ],
+        "single_seconds_median": 0.0006221045041456819,
+        "single_seconds_p95": 0.0022985998541116713
+      }
+    }
+  ]
+}

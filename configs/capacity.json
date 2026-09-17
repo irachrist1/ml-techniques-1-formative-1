@@ -1,0 +1,33 @@
+{
+  "id": "capacity",
+  "rationale": "Full-day history reduced validation RMSE to 153.13 (RidgeAR), 160.26 (LSTM), and 160.28 (CausalCNN). Test stronger regularization of correlated linear lags (alpha 10) and double neural widths (32 and 16), keeping history, learning rate and stopping budgets fixed, to assess whether limited capacity explains the remaining neural error.",
+  "models": {
+    "RidgeAR": {
+      "lookback": 144,
+      "alpha": 10
+    },
+    "LSTM": {
+      "lookback": 144,
+      "width": 32,
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    },
+    "CausalCNN": {
+      "lookback": 144,
+      "width": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    }
+  }
+}

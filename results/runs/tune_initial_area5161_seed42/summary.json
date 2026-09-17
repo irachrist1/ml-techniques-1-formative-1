@@ -1,0 +1,180 @@
+{
+  "config": {
+    "id": "initial",
+    "rationale": "Initial compact models with six hours of history. A regularized linear autoregression tests whether local linear dependence suffices; LSTM tests gated nonlinear memory; causal dilated CNN tests convolutional sequence modeling. Daily history will be investigated after validation results and training-period temporal analysis.",
+    "models": {
+      "RidgeAR": {
+        "lookback": 36,
+        "alpha": 1.0
+      },
+      "LSTM": {
+        "lookback": 36,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "CausalCNN": {
+        "lookback": 36,
+        "width": 8,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "RidgeAR",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "initial",
+      "config": {
+        "lookback": 36,
+        "alpha": 1.0
+      },
+      "rationale": "Initial compact models with six hours of history. A regularized linear autoregression tests whether local linear dependence suffices; LSTM tests gated nonlinear memory; causal dilated CNN tests convolutional sequence modeling. Daily history will be investigated after validation results and training-period temporal analysis.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 0.012957291000930127,
+      "parameter_count": 37,
+      "epochs_run": 0,
+      "best_epoch": null,
+      "validation": {
+        "n": 1008,
+        "mae": 112.89517221303952,
+        "rmse": 159.07376794828673,
+        "mape_percent_nonzero": 11.909916877165626,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 6.387499888660386e-05,
+        "warm_batch_seconds_runs": [
+          8.066699956543744e-05,
+          6.81670007907087e-05,
+          6.387499888660386e-05,
+          6.0582999140024185e-05,
+          5.8290999731980264e-05
+        ],
+        "single_seconds_median": 4.3041998651460744e-05,
+        "single_seconds_p95": 4.706059889940661e-05
+      }
+    },
+    {
+      "model": "LSTM",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "initial",
+      "config": {
+        "lookback": 36,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Initial compact models with six hours of history. A regularized linear autoregression tests whether local linear dependence suffices; LSTM tests gated nonlinear memory; causal dilated CNN tests convolutional sequence modeling. Daily history will be investigated after validation results and training-period temporal analysis.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 4.3697936669996125,
+      "parameter_count": 1169,
+      "epochs_run": 13,
+      "best_epoch": 9,
+      "validation": {
+        "n": 1008,
+        "mae": 109.26197527528576,
+        "rmse": 163.29918366595584,
+        "mape_percent_nonzero": 9.347805691251745,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.012083125000572181,
+        "warm_batch_seconds_runs": [
+          0.011954208001043298,
+          0.012231500000780215,
+          0.012035083000228042,
+          0.012343000000328175,
+          0.012083125000572181
+        ],
+        "single_seconds_median": 0.0005870409995623049,
+        "single_seconds_p95": 0.0006797206496230499
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "initial",
+      "config": {
+        "lookback": 36,
+        "width": 8,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Initial compact models with six hours of history. A regularized linear autoregression tests whether local linear dependence suffices; LSTM tests gated nonlinear memory; causal dilated CNN tests convolutional sequence modeling. Daily history will be investigated after validation results and training-period temporal analysis.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 5.453680667000299,
+      "parameter_count": 841,
+      "epochs_run": 20,
+      "best_epoch": 20,
+      "validation": {
+        "n": 1008,
+        "mae": 107.93491017745734,
+        "rmse": 161.02271551649835,
+        "mape_percent_nonzero": 9.2271745949446,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.007125749998522224,
+        "warm_batch_seconds_runs": [
+          0.007270750000316184,
+          0.007125749998522224,
+          0.007064249999530148,
+          0.007092874999216292,
+          0.0071434589990531094
+        ],
+        "single_seconds_median": 0.00017152049986179918,
+        "single_seconds_p95": 0.00020212949957567613
+      }
+    }
+  ]
+}

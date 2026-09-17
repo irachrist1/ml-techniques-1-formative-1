@@ -1,0 +1,33 @@
+{
+  "id": "daily_history",
+  "rationale": "After the six-hour initial run, validation RMSE was RidgeAR 159.07, LSTM 163.30 and CausalCNN 161.02. Training-only daily-lag correlation is 0.894 and weekly-lag correlation 0.952. Test a full-day history (144 steps) while retaining widths, learning rates and epoch budgets. Extend CNN dilations only as needed to cover the larger history. Identical eligibility masks keep evaluation timestamps fixed.",
+  "models": {
+    "RidgeAR": {
+      "lookback": 144,
+      "alpha": 1.0
+    },
+    "LSTM": {
+      "lookback": 144,
+      "width": 16,
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    },
+    "CausalCNN": {
+      "lookback": 144,
+      "width": 8,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "input": "sms-call-internet-mi-2013-11-01.txt",
+  "scope": "Identical full daily file, isolated Python processes; one run per method; filesystem cache uncontrolled",
+  "runs": [
+    {
+      "mode": "baseline",
+      "wall_seconds": 2.2257475839996914,
+      "peak_rss_bytes": 917831680,
+      "max_dataframe_bytes": 309928132
+    },
+    {
+      "mode": "chunked",
+      "wall_seconds": 1.6034630419999303,
+      "peak_rss_bytes": 124600320,
+      "max_dataframe_bytes": 2000132
+    }
+  ],
+  "peak_rss_reduction_percent": 86.42449125312388,
+  "same_missing_mask": true,
+  "same_observation_counts": true,
+  "max_abs_aggregation_difference": 1.8189894035458565e-12
+}

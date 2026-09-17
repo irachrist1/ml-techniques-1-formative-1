@@ -1,0 +1,14 @@
+__pycache__/
+.venv/
+data/
+sources/canvas-assignment.json
+*.part
+sources/papers/
+sources/Formative1_Sep_2026.pdf
+.DS_Store
+output/source-package.zip
+
+tmp/
+results/*.log
+results/download-progress.json
+results/runs/*/partial_summary.json

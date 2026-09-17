@@ -1,0 +1,81 @@
+{
+  "winners": [
+    {
+      "area": 5161,
+      "best_including_baselines": "CausalCNN",
+      "best_learned": "CausalCNN",
+      "best_learned_rmse": 118.1627368595994,
+      "persistence_rmse": 134.8777437446081,
+      "improvement_over_persistence_percent": 12.392709442603566,
+      "test_n": 1008
+    },
+    {
+      "area": 5059,
+      "best_including_baselines": "RidgeAR",
+      "best_learned": "RidgeAR",
+      "best_learned_rmse": 99.65507531336213,
+      "persistence_rmse": 114.37504426983237,
+      "improvement_over_persistence_percent": 12.869913231896158,
+      "test_n": 1008
+    },
+    {
+      "area": 5259,
+      "best_including_baselines": "RidgeAR",
+      "best_learned": "RidgeAR",
+      "best_learned_rmse": 93.16978246282306,
+      "persistence_rmse": 109.57840495553346,
+      "improvement_over_persistence_percent": 14.974321354074238,
+      "test_n": 1008
+    },
+    {
+      "area": 4159,
+      "best_including_baselines": "RidgeAR",
+      "best_learned": "RidgeAR",
+      "best_learned_rmse": 19.882086911566045,
+      "persistence_rmse": 21.544433472415633,
+      "improvement_over_persistence_percent": 7.715898229479878,
+      "test_n": 1008
+    },
+    {
+      "area": 4556,
+      "best_including_baselines": "RidgeAR",
+      "best_learned": "RidgeAR",
+      "best_learned_rmse": 35.57099822440887,
+      "persistence_rmse": 39.620965055109686,
+      "improvement_over_persistence_percent": 10.221777347087912,
+      "test_n": 1008
+    }
+  ],
+  "failure": {
+    "area": 4556,
+    "model": "CausalCNN",
+    "index": 148,
+    "timestamp_ms": 1387237200000,
+    "actual": 717.7689068293504,
+    "prediction": 405.1064756037104,
+    "abs_error": 312.66243122564,
+    "severity_train_std": 1.2383316073161093
+  },
+  "seed_count": 3,
+  "reference_seed": 42,
+  "timing_by_model": [
+    {
+      "model": "CausalCNN",
+      "train_seconds": 47.26222323333495,
+      "batch_inference_seconds": 0.07612806386702384,
+      "single_inference_ms": 0.9649193971805895
+    },
+    {
+      "model": "LSTM",
+      "train_seconds": 27.461634163934892,
+      "batch_inference_seconds": 0.08027861660423999,
+      "single_inference_ms": 4.035369532842499
+    },
+    {
+      "model": "RidgeAR",
+      "train_seconds": 0.10269162786620048,
+      "batch_inference_seconds": 0.00020424159592948853,
+      "single_inference_ms": 0.06344293457611154
+    }
+  ]
+}

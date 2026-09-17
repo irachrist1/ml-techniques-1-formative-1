@@ -1,0 +1,205 @@
+{
+  "config": {
+    "id": "selected",
+    "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+    "models": {
+      "RidgeAR": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "LSTM": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "CausalCNN": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "RidgeAR",
+      "area": 4159,
+      "seed": 42,
+      "phase": "final",
+      "experiment": "selected",
+      "config": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "scaler": {
+        "mean": 317.21014310083063,
+        "std": 187.90910707605693,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 0.05987670901231468,
+      "parameter_count": 145,
+      "epochs_run": 0,
+      "best_epoch": null,
+      "validation": {
+        "n": 1008,
+        "mae": 23.204624286388224,
+        "rmse": 34.76731341887701,
+        "mape_percent_nonzero": 7.709882973489806,
+        "mape_excluded_zero_targets": 0
+      },
+      "test": {
+        "n": 1008,
+        "mae": 14.8394263823124,
+        "rmse": 19.88208691156604,
+        "mape_percent_nonzero": 6.650413733596851,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.00024458300322294235,
+        "warm_batch_seconds_runs": [
+          0.00024458300322294235,
+          0.0001967499847523868,
+          0.0003809999907389283,
+          0.0003532910195644945,
+          0.00019979197531938553
+        ],
+        "single_seconds_median": 9.49374953052029e-05,
+        "single_seconds_p95": 0.00014637688873335713
+      }
+    },
+    {
+      "model": "LSTM",
+      "area": 4159,
+      "seed": 42,
+      "phase": "final",
+      "experiment": "selected",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "scaler": {
+        "mean": 317.21014310083063,
+        "std": 187.90910707605693,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 21.86969650001265,
+      "parameter_count": 1169,
+      "epochs_run": 20,
+      "best_epoch": 20,
+      "validation": {
+        "n": 1008,
+        "mae": 22.4100450966293,
+        "rmse": 34.78183089135338,
+        "mape_percent_nonzero": 7.2392815716594585,
+        "mape_excluded_zero_targets": 0
+      },
+      "test": {
+        "n": 1008,
+        "mae": 15.230115219307427,
+        "rmse": 20.447701377848826,
+        "mape_percent_nonzero": 6.8204846046411705,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.043920583004364744,
+        "warm_batch_seconds_runs": [
+          0.04280899997684173,
+          0.05459629200049676,
+          0.06448612498934381,
+          0.043920583004364744,
+          0.0323295840062201
+        ],
+        "single_seconds_median": 0.0021766254940303043,
+        "single_seconds_p95": 0.00818448574427748
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 4159,
+      "seed": 42,
+      "phase": "final",
+      "experiment": "selected",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 20,
+        "patience": 4
+      },
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "scaler": {
+        "mean": 317.21014310083063,
+        "std": 187.90910707605693,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 37.627795749984216,
+      "parameter_count": 4785,
+      "epochs_run": 20,
+      "best_epoch": 20,
+      "validation": {
+        "n": 1008,
+        "mae": 21.952626816432506,
+        "rmse": 33.682668532475454,
+        "mape_percent_nonzero": 7.198838549090817,
+        "mape_excluded_zero_targets": 0
+      },
+      "test": {
+        "n": 1008,
+        "mae": 15.829680414671515,
+        "rmse": 21.05116402515666,
+        "mape_percent_nonzero": 7.198256589537016,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.0460184580006171,
+        "warm_batch_seconds_runs": [
+          0.08675954100908712,
+          0.058516958000836894,
+          0.039440291991923004,
+          0.03375258299638517,
+          0.0460184580006171
+        ],
+        "single_seconds_median": 0.0010693954973248765,
+        "single_seconds_p95": 0.0036531765945255735
+      }
+    }
+  ]
+}
