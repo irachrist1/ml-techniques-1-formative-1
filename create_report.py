@@ -178,11 +178,7 @@ Standard deviations summarize optimization variation over seeds 42, 43 and 44. T
 
 [5] Telecom Italia, “Telecommunications - SMS, Call, Internet - MI,” Harvard Dataverse, 2015. https://doi.org/10.7910/DVN/EGZHFV. Data under ODbL 1.0; [from BigDataChallenge contest](http://www.telecomitalia.com/tit/en/bigdatachallenge.html).
 
-[6] Source code and reproducibility materials: [GitHub repository]({repo}).
-
-## AI assistance disclosure
-
-OpenAI Codex provided substantial assistance with code, experimental design, model implementation, testing, analysis, figures and report drafting. All reported numerical results were computed from the published dataset; synthetic data were used only for unit-test fixtures.''')
+[6] Source code and reproducibility materials: [GitHub repository]({repo}).''')
     output=ROOT/'output';output.mkdir(exist_ok=True)
     target=output/'report.md'
     if target.exists():raise FileExistsError('Do not overwrite an existing report; archive it explicitly first')

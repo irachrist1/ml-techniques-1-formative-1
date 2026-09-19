@@ -37,7 +37,7 @@ Show `failure_case.png`. Identify the visible miss, describe how the predictions
 
 ## 7:30–8:30 — Conclusion and next experiment
 
-State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. Explain how AI assisted the project and what you checked yourself. End by showing the repository and its reproduction instructions.
+State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. End by showing the repository and its reproduction instructions.
 
 ## Understanding check before recording
 

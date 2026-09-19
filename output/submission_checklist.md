@@ -2,7 +2,7 @@
 
 Validation results are recorded in `results/verification.json`.
 
-- Review the report against the saved figures and metrics. Revise the interpretation and conclusions in your own words; retain an accurate AI disclosure.
+- Review the report against the saved figures and metrics. Revise the interpretation and conclusions in your own words.
 - Resolve any questions using the code walkthrough and explain at least one modeling decision and failure case without reading generated prose.
 - Record the required 7–10 minute individual video using `video_outline.md`.
 - Add the real accessible video URL to the report references. 

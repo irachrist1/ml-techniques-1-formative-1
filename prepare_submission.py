@@ -47,7 +47,7 @@ Show `failure_case.png`. Identify the visible miss, describe how the predictions
 
 ## 7:30–8:30 — Conclusion and next experiment
 
-State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. Explain how AI assisted the project and what you checked yourself. End by showing the repository and its reproduction instructions.
+State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. End by showing the repository and its reproduction instructions.
 
 ## Understanding check before recording
 
@@ -67,7 +67,7 @@ State the result you find most defensible, a limitation of using one test week a
 
 Validation results are recorded in `results/verification.json`.
 
-- Review the report against the saved figures and metrics. Revise the interpretation and conclusions in your own words; retain an accurate AI disclosure.
+- Review the report against the saved figures and metrics. Revise the interpretation and conclusions in your own words.
 - Resolve any questions using the code walkthrough and explain at least one modeling decision and failure case without reading generated prose.
 - Record the required 7–10 minute individual video using `video_outline.md`.
 - Add the real accessible video URL to the report references. 
