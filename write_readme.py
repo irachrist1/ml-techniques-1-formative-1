@@ -13,6 +13,7 @@ A reproducible comparison of RidgeAR, LSTM and a causal dilated CNN for rolling 
 ## Submission materials
 
 - `output/report.md`: editable research report.
+- `output/formative1_report.docx`: Word version with editable text and tables.
 - `output/pdf/formative1_report.pdf`: research report PDF.
 - `output/video_outline.md`: timed 8–9 minute presentation and implementation walkthrough.
 - `output/submission_checklist.md`: remaining student actions and link checks.
@@ -98,6 +99,19 @@ python render_report.py
 ```
 
 The renderer rebuilds the PDF. `create_report.py` generates the report from results and deliberately refuses to overwrite an existing editable report. `prepare_submission.py` regenerates the video outline and checklist. Figures are computed from data; they are not illustrative synthetic curves.
+
+## Word editing
+
+Open `output/formative1_report.docx` in Word and edit it directly. Export the edited document to PDF for submission. Word edits do not automatically update `output/report.md`; running the Markdown renderer later will rebuild from the Markdown, not incorporate Word edits.
+
+To regenerate a Word copy from the Markdown, use Node.js and `docx` 9.6.1:
+
+```sh
+npm install --no-save --package-lock=false docx@9.6.1
+node create_word.cjs
+```
+
+This replaces the Word file, so preserve any Word-only edits first. Figures are embedded images; text and tables remain editable.
 
 ## Code map
 

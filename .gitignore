@@ -12,3 +12,5 @@ tmp/
 results/*.log
 results/download-progress.json
 results/runs/*/partial_summary.json
+
+node_modules/
