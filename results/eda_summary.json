@@ -21,6 +21,13 @@
   "top1_percent_share": 0.11085974361691647,
   "coverage_min": 0.08447176684881604,
   "coverage_median": 1.0,
+  "coverage_robustness": {
+    "areas_below_full_coverage": 98,
+    "minimum_coverage": 0.08447176684881604,
+    "top3_cutoff_total": 10436792.131817942,
+    "largest_rescaled_partial_total": 891901.9747159997,
+    "ranking_could_change": false
+  },
   "training_end_exclusive": "2013-12-09 Europe/Rome",
   "top_area_acf": {
     "1": 0.9824595021969783,
@@ -30,21 +37,24 @@
     "288": 0.8176521929729296,
     "1008": 0.9519568502522111
   },
+  "acf_white_noise_band_95": 0.02649616545135788,
   "adf": {
     "segment_n": 5472,
-    "statistic": -14.933841443152442,
-    "pvalue": 1.3537990472971813e-27,
-    "lags": 30,
+    "statistic": -4.103279844261234,
+    "pvalue": 0.0009565046778200675,
+    "lags": 152,
+    "max_lag_allowed": 168,
     "critical_values": {
-      "1%": -3.4315524237783115,
-      "5%": -2.8620713507660867,
-      "10%": -2.567052837027273
+      "1%": -3.4315800166692987,
+      "5%": -2.862083541535917,
+      "10%": -2.56705932658522
     }
   },
   "difference_adf": {
-    "statistic": -11.350098900816619,
-    "pvalue": 1.0044287284837111e-20,
-    "lags": 22
+    "statistic": -9.116993385261605,
+    "pvalue": 3.2819984230526625e-15,
+    "lags": 156,
+    "max_lag_allowed": 168
   },
   "stl_daily_strength": 0.8697618642641443,
   "stl_interpolated_points": 0,
@@ -61,7 +71,10 @@
       "train_max": 8044.070569441476,
       "train_zero_count": 0,
       "train_acf_1": 0.9824595021969783,
-      "train_acf_144": 0.8936097362019895
+      "train_acf_144": 0.8936097362019895,
+      "train_weekday_mean": 1356.5192080735674,
+      "train_weekend_mean": 1847.0294229858594,
+      "weekend_over_weekday": 1.3615947433644378
     },
     {
       "square": 5059,
@@ -75,7 +88,10 @@
       "train_max": 4666.120339234282,
       "train_zero_count": 0,
       "train_acf_1": 0.9717530804735828,
-      "train_acf_144": 0.9119586679070552
+      "train_acf_144": 0.9119586679070552,
+      "train_weekday_mean": 1429.4275346689308,
+      "train_weekend_mean": 1154.487363193827,
+      "weekend_over_weekday": 0.8076571460904574
     },
     {
       "square": 5259,
@@ -89,7 +105,10 @@
       "train_max": 4442.095768047928,
       "train_zero_count": 0,
       "train_acf_1": 0.9891868566227935,
-      "train_acf_144": 0.6688666299535843
+      "train_acf_144": 0.6688666299535843,
+      "train_weekday_mean": 1611.0476426822577,
+      "train_weekend_mean": 670.7903541751439,
+      "weekend_over_weekday": 0.4163690361498775
     },
     {
       "square": 4159,
@@ -103,7 +122,10 @@
       "train_max": 940.8911808690987,
       "train_zero_count": 0,
       "train_acf_1": 0.9692673357177539,
-      "train_acf_144": 0.7429116732714841
+      "train_acf_144": 0.7429116732714841,
+      "train_weekday_mean": 370.6670665090087,
+      "train_weekend_mean": 201.38680904977815,
+      "weekend_over_weekday": 0.5433091505713353
     },
     {
       "square": 4556,
@@ -117,7 +139,10 @@
       "train_max": 1868.741971499012,
       "train_zero_count": 0,
       "train_acf_1": 0.9430708430789235,
-      "train_acf_144": 0.7693421291409214
+      "train_acf_144": 0.7693421291409214,
+      "train_weekday_mean": 557.9077167812165,
+      "train_weekend_mean": 635.6140376965589,
+      "weekend_over_weekday": 1.1392816743307654
     }
   ]
 }

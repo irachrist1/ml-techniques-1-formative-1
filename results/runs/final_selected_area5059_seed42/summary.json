@@ -1,7 +1,7 @@
 {
   "config": {
     "id": "selected",
-    "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+    "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
     "models": {
       "RidgeAR": {
         "lookback": 144,
@@ -11,7 +11,7 @@
         "lookback": 144,
         "width": 16,
         "learning_rate": 0.001,
-        "epochs": 20,
+        "epochs": 80,
         "patience": 4
       },
       "CausalCNN": {
@@ -27,7 +27,7 @@
           64
         ],
         "learning_rate": 0.001,
-        "epochs": 20,
+        "epochs": 80,
         "patience": 4
       }
     }
@@ -46,7 +46,7 @@
         "lookback": 144,
         "alpha": 10
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
       "scaler": {
         "mean": 1342.6043226241611,
         "std": 956.6393511099233,
@@ -54,10 +54,13 @@
         "common_history": 144
       },
       "train_n": 5328,
-      "training_seconds": 0.08856783399824053,
+      "training_seconds": 0.04189262504223734,
       "parameter_count": 145,
       "epochs_run": 0,
+      "epoch_budget": null,
+      "stopped_early": null,
       "best_epoch": null,
+      "lowest_val_loss_epoch": null,
       "validation": {
         "n": 1008,
         "mae": 87.2557932454913,
@@ -74,16 +77,16 @@
       },
       "inference": {
         "batch_n": 1008,
-        "warm_batch_seconds_median": 0.00017395897884853184,
+        "warm_batch_seconds_median": 0.00010725000174716115,
         "warm_batch_seconds_runs": [
-          0.0002084159932564944,
-          0.00015408301260322332,
-          0.00028591600130312145,
-          0.00017395897884853184,
-          0.00014937500236555934
+          0.00012458296259865165,
+          0.00010725000174716115,
+          0.00011658400762826204,
+          9.541597682982683e-05,
+          0.00010466697858646512
         ],
-        "single_seconds_median": 0.00012850000348407775,
-        "single_seconds_p95": 0.0003114184379228391
+        "single_seconds_median": 4.341697786003351e-05,
+        "single_seconds_p95": 8.953572541940943e-05
       }
     },
     {
@@ -96,10 +99,10 @@
         "lookback": 144,
         "width": 16,
         "learning_rate": 0.001,
-        "epochs": 20,
+        "epochs": 80,
         "patience": 4
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
       "scaler": {
         "mean": 1342.6043226241611,
         "std": 956.6393511099233,
@@ -107,10 +110,13 @@
         "common_history": 144
       },
       "train_n": 5328,
-      "training_seconds": 36.58640945900697,
+      "training_seconds": 9.464650332985912,
       "parameter_count": 1169,
       "epochs_run": 10,
+      "epoch_budget": 80,
+      "stopped_early": true,
       "best_epoch": 6,
+      "lowest_val_loss_epoch": 6,
       "validation": {
         "n": 1008,
         "mae": 93.7043528694033,
@@ -127,16 +133,16 @@
       },
       "inference": {
         "batch_n": 1008,
-        "warm_batch_seconds_median": 0.13781874999403954,
+        "warm_batch_seconds_median": 0.03446779097430408,
         "warm_batch_seconds_runs": [
-          0.08120570800383575,
-          0.13916483402135782,
-          0.175028708006721,
-          0.10952295799506828,
-          0.13781874999403954
+          0.03397316701011732,
+          0.03392837499268353,
+          0.03562995797256008,
+          0.03449220902984962,
+          0.03446779097430408
         ],
-        "single_seconds_median": 0.01199445799284149,
-        "single_seconds_p95": 0.06395473520824443
+        "single_seconds_median": 0.002011479518841952,
+        "single_seconds_p95": 0.002268508478300646
       }
     },
     {
@@ -158,10 +164,10 @@
           64
         ],
         "learning_rate": 0.001,
-        "epochs": 20,
+        "epochs": 80,
         "patience": 4
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Each model uses its minimum-validation-RMSE configuration across three sequential rounds; these settings were frozen before computing test results. The small CNN validation gain should not be interpreted as statistically established superiority.",
+      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
       "scaler": {
         "mean": 1342.6043226241611,
         "std": 956.6393511099233,
@@ -169,10 +175,14 @@
         "common_history": 144
       },
       "train_n": 5328,
-      "training_seconds": 82.40374870799133,
+      "training_seconds": 13.021707291016355,
       "parameter_count": 4785,
       "epochs_run": 17,
+      "epoch_budget": 80,
+      "stopped_early": true,
       "best_epoch": 13,
+      "lowest_val_loss_epoch": 13,
+      "receptive_field": 255,
       "validation": {
         "n": 1008,
         "mae": 85.28237089244895,
@@ -189,16 +199,16 @@
       },
       "inference": {
         "batch_n": 1008,
-        "warm_batch_seconds_median": 0.12539195900899358,
+        "warm_batch_seconds_median": 0.030038999975658953,
         "warm_batch_seconds_runs": [
-          0.4451073750096839,
-          0.16087579101440497,
-          0.12539195900899358,
-          0.10112433298490942,
-          0.10379054199438542
+          0.029924208007287234,
+          0.03191266598878428,
+          0.030573458003345877,
+          0.030038999975658953,
+          0.02996866701869294
         ],
-        "single_seconds_median": 0.0015864999877521768,
-        "single_seconds_p95": 0.004061418899800628
+        "single_seconds_median": 0.00030839547980576754,
+        "single_seconds_p95": 0.00043070993851870295
       }
     }
   ]

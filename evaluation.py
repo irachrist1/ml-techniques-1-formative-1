@@ -23,30 +23,6 @@ def score(actual, predicted):
     }
 
 
-def rolling_examples(timestamps, values, lookback, start, end, step_ms=600_000):
-    """Yield history and next target within [start,end), never future inputs.
-
-    Bounds and timestamps are Unix milliseconds. Histories may cross a split
-    boundary, but targets cannot. Missing values or time gaps omit the window.
-    This implements rolling one-step evaluation using already observed history,
-    not recursive forecasting of the whole test week from a single origin.
-    """
-    if len(timestamps) != len(values) or lookback < 1 or start >= end or step_ms <= 0:
-        raise ValueError('Invalid series, window, or interval')
-    if any(b <= a for a, b in zip(timestamps, timestamps[1:])):
-        raise ValueError('Timestamps must be unique and increasing')
-    for i in range(lookback, len(values)):
-        if not start <= timestamps[i] < end:
-            continue
-        times = timestamps[i-lookback:i+1]
-        window = values[i-lookback:i+1]
-        if any(b-a != step_ms for a, b in zip(times, times[1:])):
-            continue
-        if any(v is None or not math.isfinite(v) for v in window):
-            continue
-        yield timestamps[i], list(window[:-1]), window[-1]
-
-
 def milan_midnight_ms(date):
     """Explicit local-calendar boundaries; raw epoch timestamps remain UTC."""
     return int(datetime.fromisoformat(date).replace(tzinfo=ZoneInfo('Europe/Rome')).timestamp() * 1000)

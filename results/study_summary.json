@@ -54,28 +54,58 @@
     "actual": 717.7689068293504,
     "prediction": 405.1064756037104,
     "abs_error": 312.66243122564,
-    "severity_train_std": 1.2383316073161093
+    "severity_train_std": 1.2383316073161093,
+    "next_step": {
+      "actual": 348.8605951458994,
+      "RidgeAR": 554.7595684504441,
+      "LSTM": 635.222542998784,
+      "CausalCNN": 512.6775982356004
+    },
+    "previous_actual": 414.8725125910151
   },
   "seed_count": 3,
   "reference_seed": 42,
+  "ranking_agreement": {
+    "areas": 5,
+    "agree": 0,
+    "disagree": 5
+  },
+  "epoch_budget_audit": {
+    "neural_fits": 30,
+    "stopped_early": 30,
+    "hit_budget": 0,
+    "max_epochs_run": 55,
+    "budget": 80
+  },
+  "peak_underprediction": {
+    "combinations": 15,
+    "negative_highest_decile_bias": 14,
+    "positive_lowest_decile_bias": 13,
+    "worst_highest_decile_bias": -80.78085987303659
+  },
   "timing_by_model": [
     {
       "model": "CausalCNN",
-      "train_seconds": 47.26222323333495,
-      "batch_inference_seconds": 0.07612806386702384,
-      "single_inference_ms": 0.9649193971805895
+      "train_seconds": 17.09008236658992,
+      "batch_inference_seconds": 0.030704169530266275,
+      "single_inference_ms": 0.2975762317267557
     },
     {
       "model": "LSTM",
-      "train_seconds": 27.461634163934892,
-      "batch_inference_seconds": 0.08027861660423999,
-      "single_inference_ms": 4.035369532842499
+      "train_seconds": 23.12558593066254,
+      "batch_inference_seconds": 0.03458714433945716,
+      "single_inference_ms": 2.0665528621369353
     },
     {
       "model": "RidgeAR",
-      "train_seconds": 0.10269162786620048,
-      "batch_inference_seconds": 0.00020424159592948853,
-      "single_inference_ms": 0.06344293457611154
+      "train_seconds": 0.046429333265405145,
+      "batch_inference_seconds": 0.00010051959737514457,
+      "single_inference_ms": 0.04680572892539203
     }
-  ]
+  ],
+  "parameters_by_model": {
+    "CausalCNN": 4785,
+    "LSTM": 1169,
+    "RidgeAR": 145
+  }
 }

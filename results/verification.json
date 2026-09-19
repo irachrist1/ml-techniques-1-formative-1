@@ -1,275 +1,953 @@
 {
   "complete_final_models": 45,
+  "replayed_forecasts": 135,
+  "largest_replay_difference": 8.577121712960434e-05,
+  "neural_fits_ending_at_the_epoch_cap": [],
   "saved_model_replays": [
     {
       "area": 5161,
       "model": "RidgeAR",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 4.089674496299267e-05
+    },
+    {
+      "area": 5161,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 7.592976317027933e-05
+    },
+    {
+      "area": 5161,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 5.934403461083093e-05
     },
     {
       "area": 5161,
       "model": "LSTM",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 1.4535003742821573e-06
+    },
+    {
+      "area": 5161,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 1.227848588314373e-05
     },
     {
       "area": 5161,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.6178053101612022e-06
+    },
+    {
+      "area": 5161,
       "model": "CausalCNN",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 2.896158548537642e-07
+    },
+    {
+      "area": 5161,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 1.1155907486681826e-06
     },
     {
       "area": 5161,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 3.4463459996914025e-07
+    },
+    {
+      "area": 5161,
       "model": "RidgeAR",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 4.089674496299267e-05
+    },
+    {
+      "area": 5161,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 7.592976317027933e-05
+    },
+    {
+      "area": 5161,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 5.934403461083093e-05
     },
     {
       "area": 5161,
       "model": "LSTM",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 2.8442827328944986e-06
+    },
+    {
+      "area": 5161,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 1.933655767061282e-06
     },
     {
       "area": 5161,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 3.37501091962622e-07
+    },
+    {
+      "area": 5161,
       "model": "CausalCNN",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 5.581997925219184e-06
+    },
+    {
+      "area": 5161,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 4.526900283963187e-06
     },
     {
       "area": 5161,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 1.0027997348061035e-05
+    },
+    {
+      "area": 5161,
       "model": "RidgeAR",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 4.089674496299267e-05
+    },
+    {
+      "area": 5161,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 7.592976317027933e-05
     },
     {
       "area": 5161,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 5.934403461083093e-05
+    },
+    {
+      "area": 5161,
       "model": "LSTM",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 4.546203001609683e-06
+    },
+    {
+      "area": 5161,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 3.1035310712468345e-06
+    },
+    {
+      "area": 5161,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.58598146526856e-06
     },
     {
       "area": 5161,
       "model": "CausalCNN",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 5.615738984943164e-06
+    },
+    {
+      "area": 5161,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 3.1475246942136437e-06
+    },
+    {
+      "area": 5161,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 8.581403506013885e-06
     },
     {
       "area": 5059,
       "model": "RidgeAR",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 8.503657272740384e-05
+    },
+    {
+      "area": 5059,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 3.9420134271495044e-05
+    },
+    {
+      "area": 5059,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 8.577121712960434e-05
     },
     {
       "area": 5059,
       "model": "LSTM",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 2.2664085008727852e-07
+    },
+    {
+      "area": 5059,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 7.87160797699471e-06
     },
     {
       "area": 5059,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 2.8159877274447354e-07
+    },
+    {
+      "area": 5059,
       "model": "CausalCNN",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 5.261809519652161e-06
+    },
+    {
+      "area": 5059,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 2.091196165565634e-06
     },
     {
       "area": 5059,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 7.262528640694654e-07
+    },
+    {
+      "area": 5059,
       "model": "RidgeAR",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 8.503657272740384e-05
+    },
+    {
+      "area": 5059,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 3.9420134271495044e-05
+    },
+    {
+      "area": 5059,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 8.577121712960434e-05
     },
     {
       "area": 5059,
       "model": "LSTM",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 7.3960214876933605e-06
+    },
+    {
+      "area": 5059,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 2.3364395929093007e-06
     },
     {
       "area": 5059,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 7.058796313685889e-06
+    },
+    {
+      "area": 5059,
       "model": "CausalCNN",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 8.640438409202034e-08
+    },
+    {
+      "area": 5059,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 2.3143998078012373e-06
     },
     {
       "area": 5059,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 8.811545058051706e-07
+    },
+    {
+      "area": 5059,
       "model": "RidgeAR",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 8.503657272740384e-05
+    },
+    {
+      "area": 5059,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 3.9420134271495044e-05
     },
     {
       "area": 5059,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 8.577121712960434e-05
+    },
+    {
+      "area": 5059,
       "model": "LSTM",
       "seed": 44,
-      "absolute_replay_difference": 9.594130915502319e-06
+      "position": 0,
+      "absolute_replay_difference": 1.1138131412735675e-06
+    },
+    {
+      "area": 5059,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 504,
+      "absolute_replay_difference": 5.809594313177513e-06
+    },
+    {
+      "area": 5059,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.7765382779089123e-05
     },
     {
       "area": 5059,
       "model": "CausalCNN",
       "seed": 44,
-      "absolute_replay_difference": 1.040845745592378e-05
+      "position": 0,
+      "absolute_replay_difference": 1.732193823045236e-06
+    },
+    {
+      "area": 5059,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 504,
+      "absolute_replay_difference": 1.1068846106354613e-06
+    },
+    {
+      "area": 5059,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 4.275179890100844e-07
     },
     {
       "area": 5259,
       "model": "RidgeAR",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 3.7274023156896874e-06
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 1.8179551261710003e-05
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.8103856803008966e-05
     },
     {
       "area": 5259,
       "model": "LSTM",
       "seed": 42,
-      "absolute_replay_difference": 4.980748599336948e-06
+      "position": 0,
+      "absolute_replay_difference": 3.145233705481587e-06
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 504,
+      "absolute_replay_difference": 4.933483978675213e-06
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.0939941404330966e-05
     },
     {
       "area": 5259,
       "model": "CausalCNN",
       "seed": 42,
-      "absolute_replay_difference": 8.781084943620954e-07
+      "position": 0,
+      "absolute_replay_difference": 1.0240695047514237e-05
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 504,
+      "absolute_replay_difference": 7.76544993641437e-06
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 9.127376245032792e-06
     },
     {
       "area": 5259,
       "model": "RidgeAR",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 3.7274023156896874e-06
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 1.8179551261710003e-05
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 1.8103856803008966e-05
     },
     {
       "area": 5259,
       "model": "LSTM",
       "seed": 43,
-      "absolute_replay_difference": 1.121529294323409e-06
+      "position": 0,
+      "absolute_replay_difference": 2.2924958557268837e-05
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 504,
+      "absolute_replay_difference": 4.9009281610779e-06
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 1.2534752926285364e-05
     },
     {
       "area": 5259,
       "model": "CausalCNN",
       "seed": 43,
-      "absolute_replay_difference": 2.736754595389357e-06
+      "position": 0,
+      "absolute_replay_difference": 6.181471690069884e-08
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 504,
+      "absolute_replay_difference": 3.624015334935393e-06
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 2.030822173537672e-06
     },
     {
       "area": 5259,
       "model": "RidgeAR",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 3.7274023156896874e-06
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 1.8179551261710003e-05
+    },
+    {
+      "area": 5259,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.8103856803008966e-05
     },
     {
       "area": 5259,
       "model": "LSTM",
       "seed": 44,
-      "absolute_replay_difference": 1.9063104446104262e-06
+      "position": 0,
+      "absolute_replay_difference": 4.283707738750309e-06
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 504,
+      "absolute_replay_difference": 4.446178991202032e-06
+    },
+    {
+      "area": 5259,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.2492208469438992e-05
     },
     {
       "area": 5259,
       "model": "CausalCNN",
       "seed": 44,
-      "absolute_replay_difference": 2.2022095436113887e-06
+      "position": 0,
+      "absolute_replay_difference": 1.1873037806253706e-06
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 504,
+      "absolute_replay_difference": 4.242371687723789e-06
+    },
+    {
+      "area": 5259,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 6.359047119985917e-07
     },
     {
       "area": 4159,
       "model": "RidgeAR",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 1.7164383621093293e-06
+    },
+    {
+      "area": 4159,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 3.86939495911065e-06
     },
     {
       "area": 4159,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.1206785416106868e-05
+    },
+    {
+      "area": 4159,
       "model": "LSTM",
       "seed": 42,
-      "absolute_replay_difference": 1.3123831195116509e-06
+      "position": 0,
+      "absolute_replay_difference": 2.143810888810549e-06
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 504,
+      "absolute_replay_difference": 4.798702661901189e-07
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 8.64137220446537e-07
     },
     {
       "area": 4159,
       "model": "CausalCNN",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 2.2609847860621812e-07
+    },
+    {
+      "area": 4159,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 1.5452104662472266e-07
     },
     {
       "area": 4159,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.8673900399335253e-06
+    },
+    {
+      "area": 4159,
       "model": "RidgeAR",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 1.7164383621093293e-06
+    },
+    {
+      "area": 4159,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 3.86939495911065e-06
+    },
+    {
+      "area": 4159,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 1.1206785416106868e-05
     },
     {
       "area": 4159,
       "model": "LSTM",
       "seed": 43,
-      "absolute_replay_difference": 9.000802947412012e-08
+      "position": 0,
+      "absolute_replay_difference": 8.366245651814097e-08
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 504,
+      "absolute_replay_difference": 7.802732397976797e-07
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 3.3178598499716827e-06
     },
     {
       "area": 4159,
       "model": "CausalCNN",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 6.603613371680694e-07
+    },
+    {
+      "area": 4159,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 2.2732884872311843e-06
     },
     {
       "area": 4159,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 9.017549018608406e-08
+    },
+    {
+      "area": 4159,
       "model": "RidgeAR",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 1.7164383621093293e-06
+    },
+    {
+      "area": 4159,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 3.86939495911065e-06
     },
     {
       "area": 4159,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.1206785416106868e-05
+    },
+    {
+      "area": 4159,
       "model": "LSTM",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 7.425214505474287e-07
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 2.172202357542119e-06
+    },
+    {
+      "area": 4159,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 1.404397153237369e-06
     },
     {
       "area": 4159,
       "model": "CausalCNN",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 7.654588500827231e-07
+    },
+    {
+      "area": 4159,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 1.0257978146910318e-06
+    },
+    {
+      "area": 4159,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 6.892621655651965e-07
     },
     {
       "area": 4556,
       "model": "RidgeAR",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 1.1522363706717442e-05
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 1.937794309014862e-06
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 5.412349196376454e-06
     },
     {
       "area": 4556,
       "model": "LSTM",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 2.4744272195675876e-06
+    },
+    {
+      "area": 4556,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 9.070137139133294e-07
     },
     {
       "area": 4556,
+      "model": "LSTM",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.0172452505230467e-05
+    },
+    {
+      "area": 4556,
       "model": "CausalCNN",
       "seed": 42,
+      "position": 0,
+      "absolute_replay_difference": 1.932556756401027e-06
+    },
+    {
+      "area": 4556,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 504,
       "absolute_replay_difference": 2.4851215130183846e-07
     },
     {
       "area": 4556,
+      "model": "CausalCNN",
+      "seed": 42,
+      "position": 1007,
+      "absolute_replay_difference": 1.2889128129245364e-06
+    },
+    {
+      "area": 4556,
       "model": "RidgeAR",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 1.1522363706717442e-05
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 1.937794309014862e-06
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 5.412349196376454e-06
     },
     {
       "area": 4556,
       "model": "LSTM",
       "seed": 43,
-      "absolute_replay_difference": 2.8459453460527584e-06
+      "position": 0,
+      "absolute_replay_difference": 1.3121733672960545e-06
+    },
+    {
+      "area": 4556,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 504,
+      "absolute_replay_difference": 3.5914231375500094e-06
+    },
+    {
+      "area": 4556,
+      "model": "LSTM",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 9.722441575377161e-06
     },
     {
       "area": 4556,
       "model": "CausalCNN",
       "seed": 43,
+      "position": 0,
+      "absolute_replay_difference": 3.931858145733713e-07
+    },
+    {
+      "area": 4556,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 504,
       "absolute_replay_difference": 4.3350132727937307e-07
     },
     {
       "area": 4556,
+      "model": "CausalCNN",
+      "seed": 43,
+      "position": 1007,
+      "absolute_replay_difference": 1.4139978361527028e-06
+    },
+    {
+      "area": 4556,
       "model": "RidgeAR",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 1.1522363706717442e-05
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 1.937794309014862e-06
+    },
+    {
+      "area": 4556,
+      "model": "RidgeAR",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 5.412349196376454e-06
     },
     {
       "area": 4556,
       "model": "LSTM",
       "seed": 44,
-      "absolute_replay_difference": 4.316996182751609e-08
+      "position": 0,
+      "absolute_replay_difference": 1.1303453675282071e-05
+    },
+    {
+      "area": 4556,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 504,
+      "absolute_replay_difference": 4.426694886205951e-07
+    },
+    {
+      "area": 4556,
+      "model": "LSTM",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 3.5645360867420095e-06
     },
     {
       "area": 4556,
       "model": "CausalCNN",
       "seed": 44,
+      "position": 0,
+      "absolute_replay_difference": 2.208194700870081e-06
+    },
+    {
+      "area": 4556,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 504,
       "absolute_replay_difference": 3.2944734584816615e-06
+    },
+    {
+      "area": 4556,
+      "model": "CausalCNN",
+      "seed": 44,
+      "position": 1007,
+      "absolute_replay_difference": 8.610089707872248e-08
     }
   ],
   "selected_series_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",

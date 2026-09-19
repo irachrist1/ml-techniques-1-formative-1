@@ -52,7 +52,7 @@ def render(source=None):
             story.extend([t,Spacer(1,9)]);continue
         image=re.fullmatch(r'!\[([^]]*)\]\(([^)]+)\)',line)
         if image:
-            p=source.parent/image.group(2);im=Image(str(p));scale=min((A4[0]-84)/im.imageWidth,365/im.imageHeight)
+            p=source.parent/image.group(2);im=Image(str(p));scale=min((A4[0]-84)/im.imageWidth,330/im.imageHeight)
             im.drawWidth=im.imageWidth*scale;im.drawHeight=im.imageHeight*scale
             story.append(KeepTogether([im,Paragraph(markup(image.group(1)),styles['CaptionCustom'])]));continue
         if line.startswith('# '):style=styles['Title'];line=line[2:]

@@ -1,0 +1,194 @@
+{
+  "config": {
+    "id": "budget",
+    "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+    "models": {
+      "RidgeAR": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "LSTM": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 80,
+        "patience": 4
+      },
+      "CausalCNN": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 80,
+        "patience": 4
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "RidgeAR",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "budget",
+      "config": {
+        "lookback": 144,
+        "alpha": 10
+      },
+      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 0.03963683301117271,
+      "parameter_count": 145,
+      "epochs_run": 0,
+      "epoch_budget": null,
+      "stopped_early": null,
+      "best_epoch": null,
+      "lowest_val_loss_epoch": null,
+      "validation": {
+        "n": 1008,
+        "mae": 106.06624064663019,
+        "rmse": 152.39278347095748,
+        "mape_percent_nonzero": 10.10748908586952,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.00010016601299867034,
+        "warm_batch_seconds_runs": [
+          0.0001342500327154994,
+          0.0001074589672498405,
+          0.00010016601299867034,
+          9.941699681803584e-05,
+          9.295798372477293e-05
+        ],
+        "single_seconds_median": 4.206251469440758e-05,
+        "single_seconds_p95": 4.6039270819164814e-05
+      }
+    },
+    {
+      "model": "LSTM",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "budget",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.001,
+        "epochs": 80,
+        "patience": 4
+      },
+      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 17.36653508298332,
+      "parameter_count": 1169,
+      "epochs_run": 19,
+      "epoch_budget": 80,
+      "stopped_early": true,
+      "best_epoch": 15,
+      "lowest_val_loss_epoch": 17,
+      "validation": {
+        "n": 1008,
+        "mae": 106.5407087876962,
+        "rmse": 160.25927674339334,
+        "mape_percent_nonzero": 8.668990580722172,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.03207295900210738,
+        "warm_batch_seconds_runs": [
+          0.03378408297430724,
+          0.03343895805301145,
+          0.03183233400341123,
+          0.03130891697946936,
+          0.03207295900210738
+        ],
+        "single_seconds_median": 0.0021975005220156163,
+        "single_seconds_p95": 0.0027795288158813476
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "budget",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.001,
+        "epochs": 80,
+        "patience": 4
+      },
+      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 9.25149433396291,
+      "parameter_count": 4785,
+      "epochs_run": 11,
+      "epoch_budget": 80,
+      "stopped_early": true,
+      "best_epoch": 7,
+      "lowest_val_loss_epoch": 7,
+      "receptive_field": 255,
+      "validation": {
+        "n": 1008,
+        "mae": 106.11151574066803,
+        "rmse": 160.086951178327,
+        "mape_percent_nonzero": 8.68104070334838,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.03935287502827123,
+        "warm_batch_seconds_runs": [
+          0.040640040999278426,
+          0.03552533296169713,
+          0.04213379096472636,
+          0.0363634999957867,
+          0.03935287502827123
+        ],
+        "single_seconds_median": 0.0003523130144458264,
+        "single_seconds_p95": 0.0008692456467542785
+      }
+    }
+  ]
+}

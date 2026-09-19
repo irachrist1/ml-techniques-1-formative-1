@@ -15,7 +15,7 @@ A reproducible comparison of RidgeAR, LSTM and a causal dilated CNN for rolling 
 - `output/report.md`: editable research report.
 - `output/formative1_report.docx`: Word version with editable text and tables.
 - `output/pdf/formative1_report.pdf`: research report PDF.
-- `output/video_outline.md`: timed 8–9 minute presentation and implementation walkthrough.
+- `output/video_outline.md`: timing plan for the 7-10 minute video.
 - `output/submission_checklist.md`: remaining student actions and link checks.
 - `results/verification.json`: saved-model replay and metric verification.
 
@@ -25,7 +25,7 @@ Seed 42 is the predetermined reference run; seeds 43 and 44 test optimization se
 
 {rows}
 
-Complete tables: `results/reference_metrics.csv`, `results/seed_summary.csv`, `results/timing.csv`. Each model-specific forecast plot is under `results/figures/`; all test predictions and trained models are retained under `results/runs/`. Baselines are persistence and daily seasonal persistence.
+Complete tables: `results/reference_metrics.csv`, `results/validation_metrics_all_seeds.csv`, `results/validation_vs_test_ranking.csv`, `results/peak_bias_summary.csv`, `results/seed_summary.csv`, `results/timing.csv`. Each model-specific forecast plot is under `results/figures/`; all test predictions and trained models are retained under `results/runs/`. Baselines are persistence and daily seasonal persistence.
 
 ## Setup
 
@@ -72,7 +72,9 @@ The downloader resumes partial transfers, checks MD5 before processing and refus
 
 ## Reproduce training
 
-`configs/initial.json` and the subsequent candidate configurations record the manual validation experiments. `configs/final.json` freezes the per-model settings before test evaluation. `results/tuning_log.csv` documents the observed validation results and the rationale for changes.
+`configs/initial.json`, `configs/daily_history.json`, `configs/capacity.json` and `configs/budget.json` record the four validation rounds in order, each carrying the reasoning for the change in its `rationale` field. `configs/final.json` freezes the per-model settings before any test data is scored. `results/tuning_log.csv` consolidates the observed validation results.
+
+Round four exists because an audit of `epochs_run` against the epoch cap showed the cap, not the patience rule, was ending most neural fits. It did not bind on the tuning area, which is why the first three rounds missed it. `results/study_summary.json` records the post-fix count under `epoch_budget_audit`.
 
 The delivered `results/runs/` contains completed runs. To retrain without overwriting those records, first move that directory to a separate backup location. Then run:
 
@@ -122,10 +124,11 @@ This replaces the Word file, so preserve any Word-only edits first. Figures are 
 - `summarize_results.py`: comparisons, seed sensitivity and failure analysis.
 - `memory_benchmark.py`: isolated-process baseline versus chunked memory comparison.
 - `predict_saved.py`, `verify_submission.py`: model replay and output checks.
+- `create_report.py`, `render_report.py`, `prepare_submission.py`, `write_readme.py`: report, PDF and submission-material generators. These are not needed to reproduce the study.
 
 ## Scope and limitations
 
-This is a single-week, single-horizon empirical study. Area selection uses full-period totals because the assignment requests it; this is a selection dependence and limits prospective generalization claims. Models use only the selected area's history. Shared tuning does not optimize every area separately. Missing-window exclusion can bias the evaluation toward fully observed periods. Seed variation is not a confidence interval over future weeks. Local training and inference measurements include system noise and are not production service benchmarks.
+This is a single-week, single-horizon empirical study. Area selection uses full-period totals because the assignment requests it; this is a selection dependence and limits prospective generalization claims. Models use only the selected area's history. Shared tuning does not optimize every area separately. Missing-window exclusion can bias the evaluation toward fully observed periods. Seed variation is not a confidence interval over future weeks. Validation and test disagree about the best model on several areas, so the per-area rankings should be read as one week's outcome rather than a general result; `results/validation_vs_test_ranking.csv` has the comparison. Local training and inference measurements include system noise and are not production service benchmarks.
 
 Dataset attribution and ODbL obligations: `DATA_LICENSE.md`. Research basis and differences from prior studies: `RESEARCH_NOTES.md`. Artificial values occur only in unit-test fixtures, never in reported assignment results.
 '''

@@ -1,53 +1,80 @@
-# Individual video: approximately 8–9 minutes
+# Individual video plan: 7-10 minutes
 
-Use the following timings to present the study and demonstrate the code.
+Timings for presenting the study and demonstrating the code.
 
-## 0:00–0:45 — Question and practical relevance
+## 0:00-0:45 - Question and why it matters
 
-Introduce one-step (10-minute) Internet-activity forecasting across Milan areas. Explain the distinction between activity units and data volume in GB. State why forecasting could inform network capacity allocation.
+One-step (10-minute) Internet-activity forecasting across Milan areas. Say clearly that the
+target is an activity count, not GB. Say why a short-horizon forecast is useful for capacity.
 
-## 0:45–2:00 — Real data and memory
+## 0:45-2:00 - Real data and memory
 
-Show `prepare_day.py`, the published dataset DOI in `DATA_LICENSE.md`, and `results/memory_benchmark.json`. Explain summing country-code records, why an empty activity field is not the same as observed zero, why all timestamps are preserved, and why loading one day in chunks reduces memory. The separate-process comparison is on the same complete day; it is not a theoretical extrapolation from a tiny sample.
+Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark.json`.
+Cover: summing country-code rows, why an empty Internet field is not an observed zero, and why
+chunked loading keeps peak memory bounded. Stress that the benchmark compares two processes on
+the same complete day and asserts the outputs match before reporting the reduction.
 
-## 2:00–3:15 — What the data reveals
+## 2:00-3:15 - What the data shows
 
-Show `traffic_distribution.png`, `first_two_weeks.png` and `temporal_analysis.png`. The full-period top three are [5161, 5059, 5259]. Compare their scale and temporal variation with squares 4159 and 4556. Explain one pattern you can actually see and distinguish that observation from a possible real-world explanation. Do not invent neighborhood identities.
+Show `traffic_distribution.png`, `first_two_weeks.png` and `temporal_analysis.png`. The full-period
+top three are [5161, 5059, 5259]. Compare their scale and shape against 4159 and 4556. Mention that
+1 November is an Italian public holiday, so the first low stretch is a three-day weekend. Describe
+one pattern you can actually see, and keep it separate from any guess at its cause.
 
-## 3:15–4:45 — Three model mechanisms and honest evaluation
+## 3:15-4:45 - Three model mechanisms
 
-Open `experiments.py`. Walk through training-only scaling, the past-only input window and the learned correction to persistence. Explain the linear coefficients of RidgeAR, gates in LSTM and the causal receptive field of CausalCNN. Show `configs/final.json` and justify a specific change using `results/tuning_log.csv`. Explain why December 16–22 never selected hyperparameters and why rolling one-step prediction can use the already observed part of the test week.
+Open `experiments.py`. Walk through training-only scaling, the past-only window, the common
+144-step eligibility rule and the learned correction to persistence. Explain RidgeAR's lag
+coefficients, the LSTM gates and the CNN's causal receptive field
+(255 steps against a
+144-step input). Show `configs/final.json` and justify one
+change from `results/tuning_log.csv`. Explain why 16-22 December never picked a hyperparameter, and
+why rolling one-step prediction is allowed to use the already observed part of the test week.
 
-## 4:45–6:15 — Results and demonstration
+## 4:45-6:15 - Results and live demonstration
 
-Show `results/reference_metrics.csv` and a forecast plot. On area 5161, the best learned reference model is CausalCNN, RMSE 118.16; persistence RMSE is 134.88. Compare against another area rather than declaring a universal winner. Explain MAE versus RMSE and the zero-target rule for MAPE. Show timing and seed variability.
-
-Run these commands from the project directory with the environment activated:
+Show `results/reference_metrics.csv` and a forecast plot. On area 5161 the best learned model at
+seed 42 is CausalCNN, RMSE 118.16,
+against persistence at 134.88. Explain MAE versus RMSE and the zero-target
+rule for MAPE. Then run:
 
 ```sh
 python -m unittest -v
 python predict_saved.py --run results/runs/final_selected_area5161_seed42 --model RidgeAR --timestamp '2013-12-16T12:00:00+01:00'
 ```
 
-The demonstration reconstructs one forecast from saved parameters and past observations. It does not retrain during the video. Use another fully observed timestamp if the script explicitly reports an incomplete history.
+This rebuilds one forecast from saved parameters and past observations only. Nothing retrains on
+camera. If the script reports an incomplete history, pick another fully observed timestamp.
 
-## 6:15–7:30 — Failure case and trade-off
+## 6:15-7:45 - The two results I am least comfortable with
 
-Show `failure_case.png`. Identify the visible miss, describe how the predictions respond around it, and explain what a univariate model cannot know. Compare that limitation with the computational cost of a more complex model. Do not assign a real-world event cause without evidence.
+Show `results/validation_vs_test_ranking.csv`: validation and test disagree about the winner in
+5 of 5 areas. Then `results/peak_bias_summary.csv`: all
+15 area-model combinations under-forecast the busiest
+decile and over-forecast the quietest. Tie both to the persistence-correction target.
 
-## 7:30–8:30 — Conclusion and next experiment
+Show `failure_case.png`: area 4556, error 313
+(1.24 training SD), and point out that the step *after* the spike is
+also wrong because the spike is now in the input.
 
-State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. End by showing the repository and its reproduction instructions.
+Mention the epoch-cap audit: 0 of 30 neural fits now stop
+early rather than hitting the budget, after round four raised the cap.
 
-## Understanding check before recording
+## 7:45-9:00 - Conclusion and next experiment
 
-- Why does country-code aggregation matter?
-- How are missing activity and an observed zero different?
-- Can full-period area selection affect generalization claims?
-- Where are normalization statistics fitted?
-- How is predicting the next interval different from predicting an entire future week?
-- How does the convolutional receptive field cover the lookback?
-- Why could persistence or RidgeAR beat a neural model?
-- What does random-seed variation fail to measure?
-- Which result justifies the next hyperparameter change?
-- What would you change for an unseen area or a longer horizon?
+The defensible claim, the limitation of one test week and five areas, and the next experiment
+(rolling-origin evaluation across several weeks). Close on the repository and how to reproduce.
+
+## Check you can answer these before recording
+
+- Why does country-code aggregation matter, and what can it still hide?
+- How is a missing activity value different from an observed zero?
+- Does selecting areas on full-period totals affect what you can claim?
+- Where exactly are the normalization statistics fitted?
+- Why is shuffling training windows not leakage here?
+- How does predicting the next interval differ from predicting a whole week?
+- Why is the CNN receptive field larger than the input, and does that matter?
+- Why can persistence or RidgeAR beat a neural model at this horizon?
+- What do three seeds measure, and what do they not measure?
+- Which result justified round four of tuning?
+- Why do validation and test disagree, and what would settle it?

@@ -1,0 +1,33 @@
+{
+  "id": "budget",
+  "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+  "models": {
+    "RidgeAR": {
+      "lookback": 144,
+      "alpha": 10
+    },
+    "LSTM": {
+      "lookback": 144,
+      "width": 16,
+      "learning_rate": 0.001,
+      "epochs": 80,
+      "patience": 4
+    },
+    "CausalCNN": {
+      "lookback": 144,
+      "width": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.001,
+      "epochs": 80,
+      "patience": 4
+    }
+  }
+}

@@ -1,82 +1,122 @@
 """Build the submission guide and an implementation-specific video walkthrough."""
 import json
 from pathlib import Path
-ROOT=Path(__file__).resolve().parent
+
+ROOT = Path(__file__).resolve().parent
 
 
 def main():
-    eda=json.loads((ROOT/'results/eda_summary.json').read_text());study=json.loads((ROOT/'results/study_summary.json').read_text());config=json.loads((ROOT/'configs/final.json').read_text())
-    area=eda['top3'][0];out=ROOT/'output';out.mkdir(exist_ok=True)
-    winner=study['winners'][0]
-    video=f'''# Individual video: approximately 8–9 minutes
+    eda = json.loads((ROOT / 'results/eda_summary.json').read_text())
+    study = json.loads((ROOT / 'results/study_summary.json').read_text())
+    config = json.loads((ROOT / 'configs/final.json').read_text())
+    area = eda['top3'][0]
+    out = ROOT / 'output'
+    out.mkdir(exist_ok=True)
+    winner = study['winners'][0]
+    agreement = study['ranking_agreement']
+    budget = study['epoch_budget_audit']
+    failure = study['failure']
 
-Use the following timings to present the study and demonstrate the code.
+    video = f'''# Individual video plan: 7-10 minutes
 
-## 0:00–0:45 — Question and practical relevance
+Timings for presenting the study and demonstrating the code.
 
-Introduce one-step (10-minute) Internet-activity forecasting across Milan areas. Explain the distinction between activity units and data volume in GB. State why forecasting could inform network capacity allocation.
+## 0:00-0:45 - Question and why it matters
 
-## 0:45–2:00 — Real data and memory
+One-step (10-minute) Internet-activity forecasting across Milan areas. Say clearly that the
+target is an activity count, not GB. Say why a short-horizon forecast is useful for capacity.
 
-Show `prepare_day.py`, the published dataset DOI in `DATA_LICENSE.md`, and `results/memory_benchmark.json`. Explain summing country-code records, why an empty activity field is not the same as observed zero, why all timestamps are preserved, and why loading one day in chunks reduces memory. The separate-process comparison is on the same complete day; it is not a theoretical extrapolation from a tiny sample.
+## 0:45-2:00 - Real data and memory
 
-## 2:00–3:15 — What the data reveals
+Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark.json`.
+Cover: summing country-code rows, why an empty Internet field is not an observed zero, and why
+chunked loading keeps peak memory bounded. Stress that the benchmark compares two processes on
+the same complete day and asserts the outputs match before reporting the reduction.
 
-Show `traffic_distribution.png`, `first_two_weeks.png` and `temporal_analysis.png`. The full-period top three are {eda['top3']}. Compare their scale and temporal variation with squares 4159 and 4556. Explain one pattern you can actually see and distinguish that observation from a possible real-world explanation. Do not invent neighborhood identities.
+## 2:00-3:15 - What the data shows
 
-## 3:15–4:45 — Three model mechanisms and honest evaluation
+Show `traffic_distribution.png`, `first_two_weeks.png` and `temporal_analysis.png`. The full-period
+top three are {eda['top3']}. Compare their scale and shape against 4159 and 4556. Mention that
+1 November is an Italian public holiday, so the first low stretch is a three-day weekend. Describe
+one pattern you can actually see, and keep it separate from any guess at its cause.
 
-Open `experiments.py`. Walk through training-only scaling, the past-only input window and the learned correction to persistence. Explain the linear coefficients of RidgeAR, gates in LSTM and the causal receptive field of CausalCNN. Show `configs/final.json` and justify a specific change using `results/tuning_log.csv`. Explain why December 16–22 never selected hyperparameters and why rolling one-step prediction can use the already observed part of the test week.
+## 3:15-4:45 - Three model mechanisms
 
-## 4:45–6:15 — Results and demonstration
+Open `experiments.py`. Walk through training-only scaling, the past-only window, the common
+144-step eligibility rule and the learned correction to persistence. Explain RidgeAR's lag
+coefficients, the LSTM gates and the CNN's causal receptive field
+({1 + 2 * sum(config['models']['CausalCNN']['dilations'])} steps against a
+{config['models']['CausalCNN']['lookback']}-step input). Show `configs/final.json` and justify one
+change from `results/tuning_log.csv`. Explain why 16-22 December never picked a hyperparameter, and
+why rolling one-step prediction is allowed to use the already observed part of the test week.
 
-Show `results/reference_metrics.csv` and a forecast plot. On area {area}, the best learned reference model is {winner['best_learned']}, RMSE {winner['best_learned_rmse']:.2f}; persistence RMSE is {winner['persistence_rmse']:.2f}. Compare against another area rather than declaring a universal winner. Explain MAE versus RMSE and the zero-target rule for MAPE. Show timing and seed variability.
+## 4:45-6:15 - Results and live demonstration
 
-Run these commands from the project directory with the environment activated:
+Show `results/reference_metrics.csv` and a forecast plot. On area {area} the best learned model at
+seed {study['reference_seed']} is {winner['best_learned']}, RMSE {winner['best_learned_rmse']:.2f},
+against persistence at {winner['persistence_rmse']:.2f}. Explain MAE versus RMSE and the zero-target
+rule for MAPE. Then run:
 
 ```sh
 python -m unittest -v
-python predict_saved.py --run results/runs/final_{config['id']}_area{area}_seed42 --model RidgeAR --timestamp '2013-12-16T12:00:00+01:00'
+python predict_saved.py --run results/runs/final_{config['id']}_area{area}_seed{study['reference_seed']} --model RidgeAR --timestamp '2013-12-16T12:00:00+01:00'
 ```
 
-The demonstration reconstructs one forecast from saved parameters and past observations. It does not retrain during the video. Use another fully observed timestamp if the script explicitly reports an incomplete history.
+This rebuilds one forecast from saved parameters and past observations only. Nothing retrains on
+camera. If the script reports an incomplete history, pick another fully observed timestamp.
 
-## 6:15–7:30 — Failure case and trade-off
+## 6:15-7:45 - The two results I am least comfortable with
 
-Show `failure_case.png`. Identify the visible miss, describe how the predictions respond around it, and explain what a univariate model cannot know. Compare that limitation with the computational cost of a more complex model. Do not assign a real-world event cause without evidence.
+Show `results/validation_vs_test_ranking.csv`: validation and test disagree about the winner in
+{agreement['disagree']} of {agreement['areas']} areas. Then `results/peak_bias_summary.csv`: all
+{study['peak_underprediction']['combinations']} area-model combinations under-forecast the busiest
+decile and over-forecast the quietest. Tie both to the persistence-correction target.
 
-## 7:30–8:30 — Conclusion and next experiment
+Show `failure_case.png`: area {failure['area']}, error {failure['abs_error']:.0f}
+({failure['severity_train_std']:.2f} training SD), and point out that the step *after* the spike is
+also wrong because the spike is now in the input.
 
-State the result you find most defensible, a limitation of using one test week and selected areas, and the next experiment you would run. End by showing the repository and its reproduction instructions.
+Mention the epoch-cap audit: {budget['hit_budget']} of {budget['neural_fits']} neural fits now stop
+early rather than hitting the budget, after round four raised the cap.
 
-## Understanding check before recording
+## 7:45-9:00 - Conclusion and next experiment
 
-- Why does country-code aggregation matter?
-- How are missing activity and an observed zero different?
-- Can full-period area selection affect generalization claims?
-- Where are normalization statistics fitted?
-- How is predicting the next interval different from predicting an entire future week?
-- How does the convolutional receptive field cover the lookback?
-- Why could persistence or RidgeAR beat a neural model?
-- What does random-seed variation fail to measure?
-- Which result justifies the next hyperparameter change?
-- What would you change for an unseen area or a longer horizon?
+The defensible claim, the limitation of one test week and five areas, and the next experiment
+(rolling-origin evaluation across several weeks). Close on the repository and how to reproduce.
+
+## Check you can answer these before recording
+
+- Why does country-code aggregation matter, and what can it still hide?
+- How is a missing activity value different from an observed zero?
+- Does selecting areas on full-period totals affect what you can claim?
+- Where exactly are the normalization statistics fitted?
+- Why is shuffling training windows not leakage here?
+- How does predicting the next interval differ from predicting a whole week?
+- Why is the CNN receptive field larger than the input, and does that matter?
+- Why can persistence or RidgeAR beat a neural model at this horizon?
+- What do three seeds measure, and what do they not measure?
+- Which result justified round four of tuning?
+- Why do validation and test disagree, and what would settle it?
 '''
-    (out/'video_outline.md').write_text(video)
-    (out/'submission_checklist.md').write_text('''# Before submitting
+    (out / 'video_outline.md').write_text(video)
 
-Validation results are recorded in `results/verification.json`.
+    checklist = f'''# Before submitting
 
-- Review the report against the saved figures and metrics. Revise the interpretation and conclusions in your own words.
-- Resolve any questions using the code walkthrough and explain at least one modeling decision and failure case without reading generated prose.
-- Record the required 7–10 minute individual video using `video_outline.md`.
-- Add the real accessible video URL to the report references. 
-- Ensure the GitHub repository is accessible to the grader. A private repository needs an appropriate access arrangement.
-- Rebuild the PDF with `python render_report.py` after editing `output/report.md`; inspect the rendered pages.
-- Submit the PDF through Canvas by September 20, 2026, 23:59 Kigali time. Confirm the repository and video links work for the intended audience.
+Verification state is recorded in `results/verification.json`.
 
-''')
-    print('Video outline and submission checklist created')
+- [ ] Record the 7-10 minute individual video using `video_outline.md`.
+- [ ] Paste the video URL over `PASTE_VIDEO_LINK_HERE` in `output/report.md` (title block and
+      reference [7]), then rebuild the PDF with `python render_report.py`.
+- [ ] Confirm the GitHub repository is reachable by the grader. A private repository needs an
+      explicit access arrangement.
+- [ ] Open the rebuilt PDF and check every figure rendered and no placeholder text remains.
+- [ ] Submit the PDF through Canvas by September 20, 2026, 23:59 Kigali time.
+- [ ] Open the repository and video links from a logged-out browser session.
+'''
+    (out / 'submission_checklist.md').write_text(checklist)
+    print(out / 'video_outline.md')
+    print(out / 'submission_checklist.md')
 
 
-if __name__=='__main__':main()
+if __name__ == '__main__':
+    main()
