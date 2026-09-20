@@ -1,0 +1,33 @@
+{
+  "id": "round3_lstm_width_only",
+  "rationale": "Appendix B. configs/capacity.json changed the Ridge penalty and both neural widths at once, so round three could not attribute its result. This is round two with only LSTM width = 32 changed. Validation week only.",
+  "models": {
+    "RidgeAR": {
+      "lookback": 144,
+      "alpha": 1.0
+    },
+    "LSTM": {
+      "lookback": 144,
+      "width": 32,
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    },
+    "CausalCNN": {
+      "lookback": 144,
+      "width": 8,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    }
+  }
+}

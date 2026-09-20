@@ -1,0 +1,148 @@
+{
+  "config": {
+    "id": "lr0p0003_batch256",
+    "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+    "models": {
+      "LSTM": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.0003,
+        "epochs": 80,
+        "patience": 4,
+        "batch": 256
+      },
+      "CausalCNN": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.0003,
+        "epochs": 80,
+        "patience": 4,
+        "batch": 256
+      }
+    }
+  },
+  "data_sha256": "eef8440317c55113f9a2086c6e8814423aa3e10a2dbd994ca6ad0979d81570a6",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "runs": [
+    {
+      "model": "LSTM",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "lr0p0003_batch256",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "learning_rate": 0.0003,
+        "epochs": 80,
+        "patience": 4,
+        "batch": 256
+      },
+      "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 7.206116207991727,
+      "parameter_count": 1169,
+      "epochs_run": 15,
+      "epoch_budget": 80,
+      "stopped_early": true,
+      "best_epoch": 11,
+      "lowest_val_loss_epoch": 13,
+      "validation": {
+        "n": 1008,
+        "mae": 110.12957368696144,
+        "rmse": 164.047527506481,
+        "mape_percent_nonzero": 9.523208201041134,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.024830250011291355,
+        "warm_batch_seconds_runs": [
+          0.024830250011291355,
+          0.024823207990266383,
+          0.024584333994425833,
+          0.025000167021062225,
+          0.0250236660358496
+        ],
+        "single_seconds_median": 0.0013699374976567924,
+        "single_seconds_p95": 0.0016281560790957883
+      }
+    },
+    {
+      "model": "CausalCNN",
+      "area": 5161,
+      "seed": 42,
+      "phase": "tune",
+      "experiment": "lr0p0003_batch256",
+      "config": {
+        "lookback": 144,
+        "width": 16,
+        "dilations": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "learning_rate": 0.0003,
+        "epochs": 80,
+        "patience": 4,
+        "batch": 256
+      },
+      "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+      "scaler": {
+        "mean": 1511.417170677449,
+        "std": 1389.7001802967254,
+        "fit_end_exclusive": 1386543600000,
+        "common_history": 144
+      },
+      "train_n": 5328,
+      "training_seconds": 15.19297870801529,
+      "parameter_count": 4785,
+      "epochs_run": 32,
+      "epoch_budget": 80,
+      "stopped_early": true,
+      "best_epoch": 28,
+      "lowest_val_loss_epoch": 31,
+      "receptive_field": 255,
+      "validation": {
+        "n": 1008,
+        "mae": 105.80518584347998,
+        "rmse": 159.86948227885907,
+        "mape_percent_nonzero": 8.59704127039509,
+        "mape_excluded_zero_targets": 0
+      },
+      "inference": {
+        "batch_n": 1008,
+        "warm_batch_seconds_median": 0.024161709006875753,
+        "warm_batch_seconds_runs": [
+          0.022986709023825824,
+          0.02349433401832357,
+          0.024161709006875753,
+          0.024288666958454996,
+          0.02428691601380706
+        ],
+        "single_seconds_median": 0.00021781254326924682,
+        "single_seconds_p95": 0.0002878477214835584
+      }
+    }
+  ]
+}

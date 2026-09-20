@@ -10,6 +10,8 @@ Stages, in dependency order:
   train      Fit the frozen final configuration on every area and seed.
   summarize  Rebuild every results table and figure from saved predictions.
   verify     Reload every saved model, replay forecasts and recheck metrics.
+  appendix   Post-submission side investigations, written to results/appendix/.
+             Validation week only; cannot affect any number in the report.
 
 Default (`python reproduce.py`) runs test + summarize + verify: it regenerates
 every table and figure in the report and revalidates all 45 saved models without
@@ -35,7 +37,7 @@ ROOT = Path(__file__).resolve().parent
 #: carries the reasoning for its change in its own `rationale` field.
 TUNING_ROUNDS = ['initial', 'daily_history', 'capacity', 'budget']
 
-STAGES = ['test', 'data', 'tune', 'train', 'summarize', 'verify']
+STAGES = ['test', 'data', 'tune', 'train', 'summarize', 'verify', 'appendix']
 DEFAULT_STAGES = ['test', 'summarize', 'verify']
 
 
@@ -91,8 +93,13 @@ def stage_verify() -> None:
     step(sys.executable, 'verify_submission.py')
 
 
+def stage_appendix() -> None:
+    step(sys.executable, 'appendix_experiments.py')
+
+
 RUNNERS = {'test': stage_test, 'data': stage_data, 'tune': stage_tune,
-           'train': stage_train, 'summarize': stage_summarize, 'verify': stage_verify}
+           'train': stage_train, 'summarize': stage_summarize, 'verify': stage_verify,
+           'appendix': stage_appendix}
 
 
 def main() -> None:

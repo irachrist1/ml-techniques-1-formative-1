@@ -7,7 +7,7 @@
 PYTHON ?= python
 
 .DEFAULT_GOAL := help
-.PHONY: help setup test lint reproduce tune train data all report clean
+.PHONY: help setup test lint reproduce tune train data appendix all report clean
 
 help:  ## Show this list of targets
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "} {printf "  %-12s %s\n", $$1, $$2}'
@@ -34,6 +34,9 @@ tune:  ## Replay the four validation rounds on the tuning area
 
 train:  ## Fit the frozen final configuration on every area and seed
 	$(PYTHON) reproduce.py --stages train
+
+appendix:  ## Post-submission side investigations (validation week only)
+	$(PYTHON) reproduce.py --stages appendix
 
 all:  ## Everything, from raw download to verification
 	$(PYTHON) reproduce.py --stages all

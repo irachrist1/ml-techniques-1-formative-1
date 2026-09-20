@@ -1,0 +1,112 @@
+[
+  {
+    "model": "LSTM",
+    "area": 5161,
+    "seed": 42,
+    "phase": "tune",
+    "experiment": "lr0p003_batch64",
+    "config": {
+      "lookback": 144,
+      "width": 16,
+      "learning_rate": 0.003,
+      "epochs": 80,
+      "patience": 4,
+      "batch": 64
+    },
+    "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+    "scaler": {
+      "mean": 1511.417170677449,
+      "std": 1389.7001802967254,
+      "fit_end_exclusive": 1386543600000,
+      "common_history": 144
+    },
+    "train_n": 5328,
+    "training_seconds": 11.533529624983203,
+    "parameter_count": 1169,
+    "epochs_run": 13,
+    "epoch_budget": 80,
+    "stopped_early": true,
+    "best_epoch": 9,
+    "lowest_val_loss_epoch": 9,
+    "validation": {
+      "n": 1008,
+      "mae": 101.5061253140903,
+      "rmse": 151.27693435462328,
+      "mape_percent_nonzero": 8.548330866835109,
+      "mape_excluded_zero_targets": 0
+    },
+    "inference": {
+      "batch_n": 1008,
+      "warm_batch_seconds_median": 0.02434316696599126,
+      "warm_batch_seconds_runs": [
+        0.023329916992224753,
+        0.023976082971785218,
+        0.02757758303778246,
+        0.024625624995678663,
+        0.02434316696599126
+      ],
+      "single_seconds_median": 0.0013599579979199916,
+      "single_seconds_p95": 0.0014707890804857016
+    }
+  },
+  {
+    "model": "CausalCNN",
+    "area": 5161,
+    "seed": 42,
+    "phase": "tune",
+    "experiment": "lr0p003_batch64",
+    "config": {
+      "lookback": 144,
+      "width": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.003,
+      "epochs": 80,
+      "patience": 4,
+      "batch": 64
+    },
+    "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+    "scaler": {
+      "mean": 1511.417170677449,
+      "std": 1389.7001802967254,
+      "fit_end_exclusive": 1386543600000,
+      "common_history": 144
+    },
+    "train_n": 5328,
+    "training_seconds": 5.398414249997586,
+    "parameter_count": 4785,
+    "epochs_run": 8,
+    "epoch_budget": 80,
+    "stopped_early": true,
+    "best_epoch": 4,
+    "lowest_val_loss_epoch": 4,
+    "receptive_field": 255,
+    "validation": {
+      "n": 1008,
+      "mae": 106.73264992661173,
+      "rmse": 157.23668454627605,
+      "mape_percent_nonzero": 9.908498502924148,
+      "mape_excluded_zero_targets": 0
+    },
+    "inference": {
+      "batch_n": 1008,
+      "warm_batch_seconds_median": 0.022584958001971245,
+      "warm_batch_seconds_runs": [
+        0.023312332981731743,
+        0.02255879098083824,
+        0.022584958001971245,
+        0.022480833053123206,
+        0.02299429097911343
+      ],
+      "single_seconds_median": 0.00018933351384475827,
+      "single_seconds_p95": 0.00024152702535502603
+    }
+  }
+]

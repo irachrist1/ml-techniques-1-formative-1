@@ -1,0 +1,156 @@
+[
+  {
+    "model": "RidgeAR",
+    "area": 5161,
+    "seed": 42,
+    "phase": "tune",
+    "experiment": "round3_alpha_only",
+    "config": {
+      "lookback": 144,
+      "alpha": 10
+    },
+    "rationale": "Appendix B. configs/capacity.json changed the Ridge penalty and both neural widths at once, so round three could not attribute its result. This is round two with only RidgeAR alpha = 10 changed. Validation week only.",
+    "scaler": {
+      "mean": 1511.417170677449,
+      "std": 1389.7001802967254,
+      "fit_end_exclusive": 1386543600000,
+      "common_history": 144
+    },
+    "train_n": 5328,
+    "training_seconds": 0.07710841699736193,
+    "parameter_count": 145,
+    "epochs_run": 0,
+    "epoch_budget": null,
+    "stopped_early": null,
+    "best_epoch": null,
+    "lowest_val_loss_epoch": null,
+    "validation": {
+      "n": 1008,
+      "mae": 106.06624064663019,
+      "rmse": 152.39278347095748,
+      "mape_percent_nonzero": 10.10748908586952,
+      "mape_excluded_zero_targets": 0
+    },
+    "inference": {
+      "batch_n": 1008,
+      "warm_batch_seconds_median": 8.466601138934493e-05,
+      "warm_batch_seconds_runs": [
+        9.116699220612645e-05,
+        8.129200432449579e-05,
+        8.520804112777114e-05,
+        8.466601138934493e-05,
+        8.354097371920943e-05
+      ],
+      "single_seconds_median": 3.2687035854905844e-05,
+      "single_seconds_p95": 3.531847614794969e-05
+    }
+  },
+  {
+    "model": "LSTM",
+    "area": 5161,
+    "seed": 42,
+    "phase": "tune",
+    "experiment": "round3_alpha_only",
+    "config": {
+      "lookback": 144,
+      "width": 16,
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    },
+    "rationale": "Appendix B. configs/capacity.json changed the Ridge penalty and both neural widths at once, so round three could not attribute its result. This is round two with only RidgeAR alpha = 10 changed. Validation week only.",
+    "scaler": {
+      "mean": 1511.417170677449,
+      "std": 1389.7001802967254,
+      "fit_end_exclusive": 1386543600000,
+      "common_history": 144
+    },
+    "train_n": 5328,
+    "training_seconds": 11.122514292015694,
+    "parameter_count": 1169,
+    "epochs_run": 19,
+    "epoch_budget": 20,
+    "stopped_early": true,
+    "best_epoch": 15,
+    "lowest_val_loss_epoch": 17,
+    "validation": {
+      "n": 1008,
+      "mae": 106.5407087876962,
+      "rmse": 160.25927674339334,
+      "mape_percent_nonzero": 8.668990580722172,
+      "mape_excluded_zero_targets": 0
+    },
+    "inference": {
+      "batch_n": 1008,
+      "warm_batch_seconds_median": 0.024388624995481223,
+      "warm_batch_seconds_runs": [
+        0.02466762496624142,
+        0.0246267500333488,
+        0.024079666996840388,
+        0.024230292008724064,
+        0.024388624995481223
+      ],
+      "single_seconds_median": 0.0013725205208174884,
+      "single_seconds_p95": 0.001428787491749972
+    }
+  },
+  {
+    "model": "CausalCNN",
+    "area": 5161,
+    "seed": 42,
+    "phase": "tune",
+    "experiment": "round3_alpha_only",
+    "config": {
+      "lookback": 144,
+      "width": 8,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.001,
+      "epochs": 20,
+      "patience": 4
+    },
+    "rationale": "Appendix B. configs/capacity.json changed the Ridge penalty and both neural widths at once, so round three could not attribute its result. This is round two with only RidgeAR alpha = 10 changed. Validation week only.",
+    "scaler": {
+      "mean": 1511.417170677449,
+      "std": 1389.7001802967254,
+      "fit_end_exclusive": 1386543600000,
+      "common_history": 144
+    },
+    "train_n": 5328,
+    "training_seconds": 7.036760999995749,
+    "parameter_count": 1241,
+    "epochs_run": 16,
+    "epoch_budget": 20,
+    "stopped_early": true,
+    "best_epoch": 12,
+    "lowest_val_loss_epoch": 12,
+    "receptive_field": 255,
+    "validation": {
+      "n": 1008,
+      "mae": 106.1642565577027,
+      "rmse": 160.2808043095038,
+      "mape_percent_nonzero": 8.671127437549977,
+      "mape_excluded_zero_targets": 0
+    },
+    "inference": {
+      "batch_n": 1008,
+      "warm_batch_seconds_median": 0.015663207974284887,
+      "warm_batch_seconds_runs": [
+        0.015819041000213474,
+        0.015614916977938265,
+        0.015774750034324825,
+        0.015538665989879519,
+        0.015663207974284887
+      ],
+      "single_seconds_median": 0.0001723544846754521,
+      "single_seconds_p95": 0.00022452063858509062
+    }
+  }
+]

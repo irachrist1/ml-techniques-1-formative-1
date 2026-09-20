@@ -1,0 +1,31 @@
+{
+  "id": "lr0p003_batch64",
+  "rationale": "Appendix A. Learning rate and batch size were fixed at 0.001 and 128 for the whole study and never tuned. Everything else is exactly configs/final.json. Validation week only.",
+  "models": {
+    "LSTM": {
+      "lookback": 144,
+      "width": 16,
+      "learning_rate": 0.003,
+      "epochs": 80,
+      "patience": 4,
+      "batch": 64
+    },
+    "CausalCNN": {
+      "lookback": 144,
+      "width": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64
+      ],
+      "learning_rate": 0.003,
+      "epochs": 80,
+      "patience": 4,
+      "batch": 64
+    }
+  }
+}

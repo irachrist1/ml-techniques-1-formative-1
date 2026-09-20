@@ -116,7 +116,8 @@ def measure_inference(predict: Predictor, split: dict[str, np.ndarray]) -> dict[
     }
 
 
-def run(config_path: str | Path, area: int, seed: int, phase: str) -> Path:
+def run(config_path: str | Path, area: int, seed: int, phase: str,
+        runs_dir: str | Path | None = None) -> Path:
     """Fit every model in one configuration file and write the run directory.
 
     Args:
@@ -126,6 +127,9 @@ def run(config_path: str | Path, area: int, seed: int, phase: str) -> Path:
         seed: Optimization seed.
         phase: ``'tune'`` scores validation only; ``'final'`` also scores the test
             week. Tuning rounds must never read the test split.
+        runs_dir: Where to write the run directory. Defaults to `results/runs`.
+            Side investigations point this elsewhere so they cannot be picked up
+            by the summaries that build the study's own tuning log.
 
     Returns:
         The directory the run was written to.
@@ -136,7 +140,7 @@ def run(config_path: str | Path, area: int, seed: int, phase: str) -> Path:
     """
     configs = json.loads(Path(config_path).read_text())
     name = configs['id']
-    out = ROOT / 'results/runs' / f'{phase}_{name}_area{area}_seed{seed}'
+    out = Path(runs_dir or ROOT / 'results/runs') / f'{phase}_{name}_area{area}_seed{seed}'
     if (out / 'summary.json').exists():
         raise FileExistsError(f'Run already exists: {out}; use another ID rather than overwriting evidence')
     out.mkdir(parents=True, exist_ok=True)
@@ -199,5 +203,7 @@ if __name__ == '__main__':
     parser.add_argument('--area', type=int, required=True)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--phase', choices=['tune', 'final'], default='tune')
+    parser.add_argument('--runs-dir', default=None,
+                        help='Override the run output directory (default: results/runs).')
     args = parser.parse_args()
-    run(args.config, args.area, args.seed, args.phase)
+    run(args.config, args.area, args.seed, args.phase, args.runs_dir)
