@@ -14,7 +14,7 @@ A reproducible comparison of RidgeAR, LSTM and a causal dilated CNN for rolling 
 
 - `output/report.md`: editable research report.
 - `output/formative1_report.docx`: Word version with editable text and tables.
-- `output/pdf/formative1_report.pdf`: research report PDF.
+- `output/pdf/formative1_report.pdf`: the submitted PDF, exported from the Word file. Rebuild the layout version with `python render_report.py` if you want one generated from the Markdown instead.
 - `output/video_outline.md`: timing plan for the 7-10 minute video.
 - `output/submission_checklist.md`: remaining student actions and link checks.
 - `results/verification.json`: saved-model replay and metric verification.
