@@ -1,0 +1,45 @@
+# Proves the documented clean-machine path: install the recorded environment,
+# run the tests, then rebuild every results table from the committed predictions
+# and check that nothing moved.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install the recorded environment
+        run: python -m pip install -r requirements-lock.txt
+
+      - name: Unit tests
+        run: python -m unittest -v
+
+      - name: Rebuild results and revalidate every saved model
+        run: python reproduce.py --stages summarize verify
+
+      - name: Regenerated tables must match the committed ones
+        # Figures are excluded: font rendering differs between platforms, so a
+        # PNG byte comparison would fail for reasons unrelated to the results.
+        run: git diff --exit-code -- 'results/*.csv' 'results/*.json'
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uvx ruff check .
