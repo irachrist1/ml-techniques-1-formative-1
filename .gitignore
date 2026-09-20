@@ -14,3 +14,7 @@ results/download-progress.json
 results/runs/*/partial_summary.json
 
 node_modules/
+
+# Word lock files and locally exported PDFs
+~$*.docx
+output/pdf/
