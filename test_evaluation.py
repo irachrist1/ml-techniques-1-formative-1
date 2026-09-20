@@ -1,7 +1,7 @@
 """Artificial unit fixtures only, never assignment data or empirical results."""
 import unittest
 
-from evaluation import score, milan_midnight_ms
+from evaluation import milan_midnight_ms, score
 
 
 class EvaluationTests(unittest.TestCase):

@@ -37,7 +37,8 @@ class AggregationTests(unittest.TestCase):
         self.assertEqual(reference, sum(range(9)))
 
     def test_invalid_rows_fail_before_mutation(self):
-        for square, timestamp, value in [(0, 0, 1), (10001, 0, 1), (1, 1, 1), (1, 1200000, 1), (1, 0, -1), (1, 0, np.inf)]:
+        bad_rows = [(0, 0, 1), (10001, 0, 1), (1, 1, 1), (1, 1200000, 1), (1, 0, -1), (1, 0, np.inf)]
+        for square, timestamp, value in bad_rows:
             sums = np.zeros((2, 10000))
             counts = np.zeros((2, 10000), dtype=np.uint32)
             frame = pd.DataFrame({'square': [square], 'timestamp': [timestamp], 'internet': [value]})

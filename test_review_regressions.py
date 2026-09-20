@@ -1,18 +1,18 @@
 """Regression cases for parser, replay, checkpoint and diagnostic failures."""
 import json
-from pathlib import Path
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
 
 import predict_saved
-from prepare_day import read_projected
-from summarize_results import failure_neighbors, COLORS
-from verify_submission import validate_training_record
 from analyze import coverage_robustness
+from prepare_day import read_projected
+from summarize_results import COLORS, failure_neighbors
+from verify_submission import validate_training_record
 
 
 class ReviewRegressions(unittest.TestCase):
@@ -32,7 +32,8 @@ class ReviewRegressions(unittest.TestCase):
     def replay_fixture(self, directory, times):
         root = Path(directory)
         (root / 'results').mkdir()
-        pd.DataFrame({'1': [1., 2., 3., 4.]}, index=times).rename_axis('timestamp_ms').to_csv(root / 'results/selected_series.csv')
+        series = pd.DataFrame({'1': [1., 2., 3., 4.]}, index=times).rename_axis('timestamp_ms')
+        series.to_csv(root / 'results/selected_series.csv')
         run = root / 'run'
         run.mkdir()
         (run / 'summary.json').write_text(json.dumps({'runs': [{'model': 'RidgeAR', 'area': 1,
