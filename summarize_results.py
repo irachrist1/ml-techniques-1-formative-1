@@ -2,33 +2,32 @@
 import json
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-from evaluation import score, milan_midnight_ms
+from evaluation import score
+from protocol import COLORS, REFERENCE_SEED, SEEDS, TEST_END, TEST_START
 
 ROOT = Path(__file__).resolve().parent
 RESULTS = ROOT / 'results'
 FIGURES = RESULTS / 'figures'
-COLORS = {'RidgeAR': '#14645a', 'LSTM': '#b05f28', 'CausalCNN': '#53679a'}
-SEEDS = [42, 43, 44]
-REFERENCE_SEED = 42
+TIMING_COLUMNS = ['train_seconds', 'batch_inference_seconds', 'single_inference_ms']
 plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 9, 'axes.spines.top': False,
                      'axes.spines.right': False, 'figure.dpi': 150})
 
 
-def load_predictions(folder, kind, split):
+def load_predictions(folder: Path, kind: str, split: str) -> pd.DataFrame:
     p = pd.read_csv(folder / f'{kind}_{split}_predictions.csv')
     if p.timestamp_ms.duplicated().any():
         raise ValueError(f'Duplicate predictions in {folder.name}/{kind}_{split}')
     return p
 
 
-def forecast_plot(area, kind, p):
+def forecast_plot(area: int, kind: str, p: pd.DataFrame) -> None:
     local = pd.to_datetime(p.timestamp_ms, unit='ms', utc=True).dt.tz_convert('Europe/Rome')
     fig, ax = plt.subplots(figsize=(9, 2.7))
     ax.plot(local, p.actual, label='Observed', color='#252525', lw=.85)
@@ -41,7 +40,7 @@ def forecast_plot(area, kind, p):
     plt.close(fig)
 
 
-def failure_neighbors(predictions, area, index):
+def failure_neighbors(predictions: dict, area: int, index: int) -> tuple:
     reference = predictions[(area, 'RidgeAR')]
     previous = float(reference.actual.iloc[index - 1]) if index > 0 else None
     following = None
@@ -51,7 +50,7 @@ def failure_neighbors(predictions, area, index):
     return previous, following
 
 
-def main():
+def main() -> None:
     selected = json.loads((ROOT / 'configs/final.json').read_text())
     eda = json.loads((RESULTS / 'eda_summary.json').read_text())
     areas = eda['areas']
@@ -67,8 +66,7 @@ def main():
             for r in summary['runs']:
                 kind = r['model']
                 p = load_predictions(folder, kind, 'test')
-                if not p.timestamp_ms.between(milan_midnight_ms('2013-12-16'),
-                                              milan_midnight_ms('2013-12-23') - 1).all():
+                if not p.timestamp_ms.between(TEST_START, TEST_END - 1).all():
                     raise ValueError('Wrong test dates')
                 previous = reference_times.setdefault(area, p.timestamp_ms.to_numpy())
                 np.testing.assert_array_equal(previous, p.timestamp_ms.to_numpy())
@@ -225,7 +223,7 @@ def main():
 
     # Learning curves for the reference fit on the highest-ranked area.
     fig, axs = plt.subplots(1, 2, figsize=(9, 3))
-    for ax, kind in zip(axs, ['LSTM', 'CausalCNN']):
+    for ax, kind in zip(axs, ['LSTM', 'CausalCNN'], strict=True):
         history = json.loads((RESULTS / 'runs' / f'final_{name}_area{areas[0]}_seed{REFERENCE_SEED}'
                               / f'{kind}_history.json').read_text())
         ax.plot(np.arange(1, len(history['loss']) + 1), history['loss'], label='Training')
@@ -253,8 +251,7 @@ def main():
             'positive_lowest_decile_bias': int((peak.lowest_decile_bias > 0).sum()),
             'worst_highest_decile_bias': float(peak.highest_decile_bias.min()),
         },
-        'timing_by_model': times.groupby('model')[
-            ['train_seconds', 'batch_inference_seconds', 'single_inference_ms']].mean().reset_index().to_dict('records'),
+        'timing_by_model': times.groupby('model')[TIMING_COLUMNS].mean().reset_index().to_dict('records'),
         'parameters_by_model': times.groupby('model').parameters.max().astype(int).to_dict(),
     }
     (RESULTS / 'study_summary.json').write_text(json.dumps(summary, indent=2))

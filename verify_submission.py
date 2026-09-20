@@ -6,16 +6,19 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from evaluation import milan_midnight_ms, score
+from features import windows
 from predict_saved import predict
-from experiments import windows
-from evaluation import score, milan_midnight_ms
+from protocol import MODELS, SEEDS
 
 ROOT = Path(__file__).resolve().parent
-SEEDS = [42, 43, 44]
-MODELS = ['RidgeAR', 'LSTM', 'CausalCNN']
+
+# The split boundaries below are written out as date strings rather than imported
+# from protocol.py on purpose. This script exists to catch a wrong constant, and
+# it cannot do that if it agrees with the module it is checking by construction.
 
 
-def validate_training_record(entry, history):
+def validate_training_record(entry: dict, history: dict) -> None:
     """Check the persisted checkpoint against the actual min-delta stopping rule."""
     if entry['model'] == 'RidgeAR':
         return
@@ -32,7 +35,7 @@ def validate_training_record(entry, history):
     assert entry['lowest_val_loss_epoch'] == int(np.argmin(losses)) + 1
 
 
-def main():
+def main() -> None:
     eda = json.loads((ROOT / 'results/eda_summary.json').read_text())
     config = json.loads((ROOT / 'configs/final.json').read_text())
     frame = pd.read_csv(ROOT / 'results/selected_series.csv', index_col='timestamp_ms')
@@ -100,9 +103,8 @@ def main():
                 assert entry['scaler']['fit_end_exclusive'] == milan_midnight_ms('2013-12-09')
 
                 # Early stopping, not the epoch cap, should be ending neural training.
-                if entry.get('epoch_budget') and entry['epochs_run']:
-                    if not entry.get('stopped_early'):
-                        capped.append(f"{area}/{kind}/seed{seed}")
+                if entry.get('epoch_budget') and entry['epochs_run'] and not entry.get('stopped_early'):
+                    capped.append(f"{area}/{kind}/seed{seed}")
 
                 # Replay the first, middle and last target from every saved model, so
                 # boundary positions are covered and not only a comfortable interior one.
