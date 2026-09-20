@@ -32,9 +32,12 @@ jobs:
         run: python reproduce.py --stages summarize verify
 
       - name: Regenerated tables must match the committed ones
-        # Figures are excluded: font rendering differs between platforms, so a
-        # PNG byte comparison would fail for reasons unrelated to the results.
-        run: git diff --exit-code -- 'results/*.csv' 'results/*.json'
+        # Compared numerically rather than byte for byte. Rebuilding the same
+        # tables on a different CPU architecture can move a float64 sum by one
+        # unit in the last place, which is noise, not a regression. Figures are
+        # excluded for the same kind of reason: font rendering is platform
+        # specific, so a PNG byte comparison would fail for no useful reason.
+        run: python check_regenerated.py
 
   lint:
     runs-on: ubuntu-latest

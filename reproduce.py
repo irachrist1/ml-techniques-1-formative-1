@@ -91,6 +91,7 @@ def stage_summarize() -> None:
 
 def stage_verify() -> None:
     step(sys.executable, 'verify_submission.py')
+    step(sys.executable, 'check_regenerated.py')
 
 
 def stage_appendix() -> None:
