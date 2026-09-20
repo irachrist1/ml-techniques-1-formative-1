@@ -6,7 +6,7 @@
 
 ## 1. Introduction
 
-This study asks how three distinct sequential models compare for the next ten minutes of Internet activity, and whether their performance varies across Milan areas. The target is publisher-scaled activity, not bandwidth or a byte count. Forecasting this proxy can inform demand analysis, but its errors cannot be interpreted as megabytes or direct capacity requirements.
+This study asks how three distinct sequential models compare for the next ten minutes of Internet activity, and whether their performance varies across Milan areas. What I predict is the dataset's activity count, not bandwidth and not bytes. So every error figure in this report is in activity units, and none of them should be read as megabytes or as a capacity number.
 
 The complete November-December 2013 collection is processed to rank 10,000 areas. RidgeAR, LSTM and CausalCNN are compared with immediate persistence and daily-seasonal persistence. December 16-22 supplies the evaluation week.
 
@@ -28,7 +28,7 @@ The reference-seed result on area 5161 favors CausalCNN (RMSE 118.16 versus pers
 
 The 61 daily files contain 314,966,126 rows and 20.48 GB. January 1 is excluded. Downloads and daily preparation check publisher MD5 values. Timestamps use Europe/Rome boundaries and a ten-minute grid. Square IDs are validated before conversion to int32; activity remains float64.
 
-Country-code Internet values are summed within each square and interval. Empty fields are excluded, observed zeros are retained, and a bin is missing when it has no observed Internet values. There are 145,354 missing bins among 87,840,000. A positive observation count does not establish complete country coverage.
+Country-code Internet values are summed within each square and interval. Empty fields are excluded, observed zeros are retained, and a bin is missing when it has no observed Internet values. There are 145,354 missing bins among 87,840,000. One thing I cannot check from this data: a bin can have some country rows and be missing others, and there is no way to tell that apart from full coverage.
 
 Projected, chunked input and fixed daily sum/count arrays (17.28 MB) avoid retaining the full collection in RAM. Arrays are not the whole process footprint: parser objects, validation and transient allocations also contribute. Raw files remain on disk, trading storage and I/O for bounded processing memory.
 
@@ -39,11 +39,11 @@ Projected, chunked input and fixed daily sum/count arrays (17.28 MB) avoid retai
 | baseline | 1087.6 | 773.5-1125.4 | 2.32 | 309.9 |
 | chunked | 384.7 | 347.1-391.1 | 3.78 | 2.0 |
 
-The median peak reduction is 64.6%. Every pair matches missing masks and observation counts; maximum aggregate difference is 1.8e-12. Order alternates, but cache and background load are uncontrolled. Chunked processing is the slower of the two here, and most of that gap is the per-chunk square-ID validation rather than the chunking itself: reading the same file with the IDs narrowed straight to int32 runs in about 1.8 s against 3.7 s with validation, so before that check was added the chunked path was marginally faster than the full-day load. I keep the check because narrowing first lets an out-of-range ID wrap into a valid one. Wall time excludes imports, checksums and serialization; RSS includes imports and processing before serialization. The older single-run 86.4% reduction is retained in `memory_benchmark.json`, not treated as a repeatable guarantee.
+The median peak reduction is 64.6%. Every pair matches missing masks and observation counts; maximum aggregate difference is 1.8e-12. Order alternates, but cache and background load are uncontrolled. Chunked processing is the slower of the two here, and most of that gap is the per-chunk square-ID validation rather than the chunking itself: reading the same file with the IDs narrowed straight to int32 runs in about 1.8 s against 3.7 s with validation, so before that check was added the chunked path was marginally faster than the full-day load. I keep the check because narrowing first lets an out-of-range ID wrap into a valid one. Wall time leaves out imports, checksums and writing the output; peak memory includes imports and everything up to that point. An earlier single run of this benchmark reported 86.4%. It did not reproduce, so I keep it in `memory_benchmark.json` for the record but I do not rely on it.
 
 ![Figure 1. Total observed activity across 10,000 areas over November-December.](../results/figures/traffic_distribution.png)
 
-The distribution is right-skewed: median 274,706, 99th percentile 4,666,202, maximum 12,682,673. The top three are **5161, 5059, 5259**, holding 0.62% of total observed activity. Under the assumption that missing bins equal each area's observed mean, the largest adjusted partial-area total is 891,902, below third place (10,436,792). This sensitivity scenario is not an upper bound on missing traffic. Selection uses full-period totals as required, including the evaluation week; it is disclosed selection dependence.
+The distribution is right-skewed: median 274,706, 99th percentile 4,666,202, maximum 12,682,673. The top three are **5161, 5059, 5259**, holding 0.62% of total observed activity. Under the assumption that missing bins equal each area's observed mean, the largest adjusted partial-area total is 891,902, below third place (10,436,792). That is a what-if under an assumption, not a hard limit on how much traffic could be hiding in the missing bins. I also picked the areas using totals over the whole period, which includes the evaluation week. The brief asks for that, but it does mean my choice of area is not independent of the week I test on.
 
 ---PAGE---
 
@@ -130,7 +130,7 @@ The correction target does not force zero changes: minimizing squared error in d
 | budget | LSTM | 160.26 | 19 | 17.367 |
 | budget | CausalCNN | 160.09 | 11 | 9.251 |
 
-Round 2 improved all models by extending six-hour history to a day. CNN dilation depth also changed, so its improvement cannot be attributed to history alone. Round 3 retained Ridge alpha 10 and LSTM width 16; CNN width 16 reduced RMSE from 160.28 to 160.09. This 0.12% gain justified selection only under the stated minimum-validation-RMSE rule; it does not establish a reliable capacity benefit. Each candidate used one tuning seed.
+Round 2 improved all models by extending six-hour history to a day. CNN dilation depth also changed, so its improvement cannot be attributed to history alone. Round 3 retained Ridge alpha 10 and LSTM width 16; CNN width 16 reduced RMSE from 160.28 to 160.09. That is a 0.12% difference. It decided the choice only because I had committed in advance to taking the lowest validation RMSE; it is far too small to claim the wider CNN is genuinely better. Each candidate used one tuning seed.
 
 The original 20-epoch study had already produced test results when a stopping-history audit motivated round 4. Of 30 neural fits, 22 ran 20 epochs; one also triggered patience there, leaving 21 cap-only terminations. Ten had minimum recorded validation loss at the final epoch. The cap did not bind for area 5161 seed 42, but did for its CNN seeds 43 and 44. Increasing it uniformly to 80 is a budget-sensitivity revision, not evidence that finite budgets are inherently incorrect.
 
@@ -142,7 +142,7 @@ Validation below training loss can reflect different traffic regimes and trainin
 
 ---PAGE---
 
-## 7. Results and measured computation
+## 7. Results and timing
 
 **Table 6. Area 5161; seed 42, 1,008 eligible targets.**
 
@@ -226,7 +226,7 @@ Observed and predicted activity use identical timestamps, reference seed 42 and 
 
 ## 8. Comparative discussion
 
-Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; this is a small observed loss, not a demonstrated statistical tie. Daily-seasonal persistence is worse in all five areas. I read this as confirming that the immediate previous value is the thing to beat at a ten-minute horizon, not as evidence that seasonal information is useless: a model given the daily shape *alongside* recent history could still use it, and I have not tested that.
+Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; that is a small loss on this particular week, not a difference I have shown to be real. Daily-seasonal persistence is worse in all five areas. I read this as confirming that the immediate previous value is the thing to beat at a ten-minute horizon, not as evidence that seasonal information is useless: a model given the daily shape *alongside* recent history could still use it, and I have not tested that.
 
 **Table 10. Validation/test winners at seed 42 only.**
 
@@ -260,35 +260,33 @@ On area 5259, Ridge wins at seed 42, but CNN has the lower three-seed mean. On a
 | LSTM | +13.3 | -50.3 | 151.8 |
 | CausalCNN | +4.3 | -36.2 | 152.1 |
 
-Across areas, 14/15 high-decile biases are negative and 13/15 low-decile biases positive. These bins condition on realized targets; even an optimal conditional-mean forecast can miss unpredictable extremes in this direction. The pattern is useful for diagnosing capacity-related errors but does not identify the correction target as their cause. A direct-target ablation and prospective threshold-based diagnostics would test that explanation.
+Across areas, 14/15 high-decile biases are negative and 13/15 low-decile biases positive. I should be careful about what this proves. The deciles are defined by what actually happened, so even a perfect forecast would look biased this way at the extremes: the unpredictable part of a spike can only land on one side. The pattern is a useful description of where the errors are worst, but it does not prove the correction target is what causes it. Training a model to predict the value directly instead would test that.
 
 ---PAGE---
 
 ### 8.1 Failure case and limits of the explanation
 
-![Figure 9. Largest reference-seed absolute error divided by area-specific training sample SD; selected retrospectively for diagnosis.](../results/figures/failure_case.png)
+![Figure 9. The biggest single error at seed 42, scaled by each area's training standard deviation so areas of different size compare fairly. I picked this case after the models were finished.](../results/figures/failure_case.png)
 
 The selected miss is area 4556 at 2013-12-17 00:40 CET. CausalCNN predicts 405.11 against 717.77, an absolute error of 312.66, or 1.24 training SDs. Activity rises from 414.87 to 717.77 and then falls to 348.86. All three models miss the rise and overshoot the fall. The following interval has actual 348.86, compared with RidgeAR 554.76, LSTM 635.22, CausalCNN 512.68.
 
-The spike enters the next window and persistence anchor, which is consistent with the observed lagging response. The correction could in principle cancel that anchor; this single case does not prove an unavoidable architectural failure or that further tuning cannot help. The maximum-error selection is intentionally unrepresentative. No verified event cause is available, and a measurement anomaly remains possible.
+The spike enters the next window and persistence anchor, which is consistent with the observed lagging response. A model could in principle learn to cancel that, so I would not claim this is a hard limit of the architecture or that more tuning could not help. This is also the single worst error I could find, so it is deliberately not a typical case. I have no evidence of what caused the spike, and with one interval involved I cannot rule out a measurement glitch.
 
 A defensible next experiment would compare direct-target and correction-target models under matched validation and compute protocols, then assess abrupt changes on additional periods. Neighboring-area observations may contain predictive information, but that benefit has not been demonstrated. An asymmetric loss could prioritize costly underprediction, with its accuracy/calibration trade-off evaluated separately.
 
 ## 9. Conclusion and future work
 
-The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR remains competitive at much lower measured computation cost. Rankings move with area, seed and week, so I am not willing to name a best architecture on this evidence. What I would defend is narrower: at this horizon a 145-parameter linear model is a serious competitor, and the burden is on the more expensive models to show a gain that survives more than one week.
+The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR stays competitive at a fraction of the training cost. Rankings move with area, seed and week, so I am not willing to name a best architecture on this evidence. What I would defend is narrower: at this horizon a 145-parameter linear model is a serious competitor, and the burden is on the more expensive models to show a gain that survives more than one week.
 
-The main limitations are one reused evaluation week, full-period area selection, hyperparameters developed mainly on one area/seed, partial aggregation coverage and unequal training scopes. Next steps are prospective area selection, rolling-origin evaluation with explicitly reserved periods, matched-budget comparisons and input/target ablations. Daily and weekly dependence motivate calendar or longer-history features, but their value must be tested rather than inferred from correlation alone.
+The main limits are these. I have one evaluation week, and I reused it after revising the epoch budget. The areas were chosen using totals that include that week. Hyperparameters were tuned mostly on one area and one seed. Some aggregation bins are only partly covered. And the training budgets are not matched across models. What I would do next is choose the areas from an earlier period, evaluate across several weeks with a rolling origin, give each model the same compute, and test whether predicting the value directly beats predicting a correction. The daily and weekly correlation suggests calendar features might help, but that needs testing rather than assuming.
 
 ---PAGE---
 
 ## AI assistance disclosure
 
-I used AI assistance substantially on this project, and I want to be specific about where: writing the code, designing the experiments, implementing the three models, writing the tests, running the analysis, producing the figures, and drafting this report. The later audit that caught the epoch-cap problem, the unreproducible memory figure and several wrong claims in my own text was AI-assisted as well.
+I used AI assistance throughout this project: writing and debugging the code, designing the experiments, building the models, writing the tests, running the analysis, making the figures, and drafting this report. It also helped me audit my own work, which is how I found the epoch-budget problem and a memory figure that did not reproduce. Every number here comes from the real dataset and can be recomputed from the saved predictions in the repository. The only made-up values anywhere are the small fixtures in the unit tests.
 
-What that assistance did not do is invent results. Every number in this report is computed from the published Telecom Italia dataset by the code in the repository, and each one can be recomputed from the saved predictions. The only artificial values anywhere in the project are the small fixtures in the unit tests.
-
-I am responsible for what I am submitting under my name, including being able to explain and justify the data handling, the memory decisions, the model choices, the experiments and the conclusions drawn from them.
+I am responsible for what I am submitting, including being able to explain and justify the data handling, the memory decisions, the model choices, the experiments and the conclusions I draw from them.
 
 ## References
 
