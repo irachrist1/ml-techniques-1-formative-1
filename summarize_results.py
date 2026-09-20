@@ -41,6 +41,16 @@ def forecast_plot(area, kind, p):
     plt.close(fig)
 
 
+def failure_neighbors(predictions, area, index):
+    reference = predictions[(area, 'RidgeAR')]
+    previous = float(reference.actual.iloc[index - 1]) if index > 0 else None
+    following = None
+    if index + 1 < len(reference):
+        following = {'actual': float(reference.actual.iloc[index + 1]),
+                     **{kind: float(predictions[(area, kind)].prediction.iloc[index + 1]) for kind in COLORS}}
+    return previous, following
+
+
 def main():
     selected = json.loads((ROOT / 'configs/final.json').read_text())
     eda = json.loads((RESULTS / 'eda_summary.json').read_text())
@@ -123,6 +133,16 @@ def main():
     ranking = pd.DataFrame(ranking_rows)
     ranking.to_csv(RESULTS / 'validation_vs_test_ranking.csv', index=False)
 
+    seed_rankings = []
+    for seed in SEEDS:
+        for area in areas:
+            v = validation[(validation.seed == seed) & (validation.area == area)]
+            t = metrics[(metrics.seed == seed) & (metrics.area == area)]
+            vb, tb = v.loc[v.rmse.idxmin(), 'model'], t.loc[t.rmse.idxmin(), 'model']
+            seed_rankings.append({'seed': seed, 'area': area, 'validation_best': vb,
+                                  'test_best': tb, 'agree': vb == tb})
+    pd.DataFrame(seed_rankings).to_csv(RESULTS / 'validation_vs_test_by_seed.csv', index=False)
+
     # Select the failure event by largest reference-model absolute error / training std.
     failure = None
     for area in areas:
@@ -137,13 +157,8 @@ def main():
                            'timestamp_ms': int(p.timestamp_ms.iloc[i]), 'actual': float(p.actual.iloc[i]),
                            'prediction': float(p.prediction.iloc[i]), 'abs_error': float(error[i]),
                            'severity_train_std': severity}
-    # Record what happens at the step after the miss: the spike is carried forward.
     fa, fi = failure['area'], failure['index']
-    failure['next_step'] = {
-        'actual': float(predictions[(fa, 'RidgeAR')].actual.iloc[fi + 1]),
-        **{kind: float(predictions[(fa, kind)].prediction.iloc[fi + 1]) for kind in COLORS},
-    }
-    failure['previous_actual'] = float(predictions[(fa, 'RidgeAR')].actual.iloc[fi - 1])
+    failure['previous_actual'], failure['next_step'] = failure_neighbors(predictions, fa, fi)
 
     center = failure['timestamp_ms']
     fig, ax = plt.subplots(figsize=(9, 3.5))

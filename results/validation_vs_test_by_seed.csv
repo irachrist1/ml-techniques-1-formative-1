@@ -1,0 +1,16 @@
+seed,area,validation_best,test_best,agree
+42,5161,RidgeAR,CausalCNN,False
+42,5059,CausalCNN,RidgeAR,False
+42,5259,CausalCNN,RidgeAR,False
+42,4159,LSTM,RidgeAR,False
+42,4556,CausalCNN,RidgeAR,False
+43,5161,CausalCNN,CausalCNN,True
+43,5059,RidgeAR,LSTM,False
+43,5259,CausalCNN,CausalCNN,True
+43,4159,LSTM,LSTM,True
+43,4556,CausalCNN,RidgeAR,False
+44,5161,CausalCNN,CausalCNN,True
+44,5059,CausalCNN,RidgeAR,False
+44,5259,CausalCNN,CausalCNN,True
+44,4159,CausalCNN,CausalCNN,True
+44,4556,CausalCNN,RidgeAR,False

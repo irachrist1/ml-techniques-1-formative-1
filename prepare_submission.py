@@ -28,7 +28,7 @@ target is an activity count, not GB. Say why a short-horizon forecast is useful 
 
 ## 0:45-2:00 - Real data and memory
 
-Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark.json`.
+Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark_recheck.json`.
 Cover: summing country-code rows, why an empty Internet field is not an observed zero, and why
 chunked loading keeps peak memory bounded. Stress that the benchmark compares two processes on
 the same complete day and asserts the outputs match before reporting the reduction.
@@ -47,8 +47,7 @@ Open `experiments.py`. Walk through training-only scaling, the past-only window,
 coefficients, the LSTM gates and the CNN's causal receptive field
 ({1 + 2 * sum(config['models']['CausalCNN']['dilations'])} steps against a
 {config['models']['CausalCNN']['lookback']}-step input). Show `configs/final.json` and justify one
-change from `results/tuning_log.csv`. Explain why 16-22 December never picked a hyperparameter, and
-why rolling one-step prediction is allowed to use the already observed part of the test week.
+change from `results/tuning_log.csv`. Explain that the budget revision occurred after original test results were available, so this is a reevaluation on the same week. Explain why rolling one-step prediction is allowed to use the already observed part of the test week.
 
 ## 4:45-6:15 - Results and live demonstration
 
@@ -68,15 +67,13 @@ camera. If the script reports an incomplete history, pick another fully observed
 ## 6:15-7:45 - The two results I am least comfortable with
 
 Show `results/validation_vs_test_ranking.csv`: validation and test disagree about the winner in
-{agreement['disagree']} of {agreement['areas']} areas. Then `results/peak_bias_summary.csv`: all
-{study['peak_underprediction']['combinations']} area-model combinations under-forecast the busiest
-decile and over-forecast the quietest. Tie both to the persistence-correction target.
+{agreement['disagree']} of {agreement['areas']} areas. Then `results/peak_bias_summary.csv`: most combinations under-forecast the busiest decile and over-forecast the quietest. Conditioning on the realized target can produce this pattern; it does not establish that the correction parameterization caused it.
 
 Show `failure_case.png`: area {failure['area']}, error {failure['abs_error']:.0f}
 ({failure['severity_train_std']:.2f} training SD), and point out that the step *after* the spike is
 also wrong because the spike is now in the input.
 
-Mention the epoch-cap audit: {budget['hit_budget']} of {budget['neural_fits']} neural fits now stop
+Mention the epoch-cap audit: {budget['neural_fits'] - budget['hit_budget']} of {budget['neural_fits']} neural fits now stop
 early rather than hitting the budget, after round four raised the cap.
 
 ## 7:45-9:00 - Conclusion and next experiment
@@ -105,10 +102,8 @@ The defensible claim, the limitation of one test week and five areas, and the ne
 Verification state is recorded in `results/verification.json`.
 
 - [ ] Record the 7-10 minute individual video using `video_outline.md`.
-- [ ] Paste the video URL over `PASTE_VIDEO_LINK_HERE` in `output/report.md` (title block and
-      reference [7]), then rebuild the PDF with `python render_report.py`.
-- [ ] Confirm the GitHub repository is reachable by the grader. A private repository needs an
-      explicit access arrangement.
+- [ ] Replace the pending-video statement in reference [7] of `output/report.md` with the accessible video URL, then rebuild the PDF with `python render_report.py`.
+- [ ] Confirm the GitHub repository is reachable by the grader. Check the public link from a logged-out session.
 - [ ] Open the rebuilt PDF and check every figure rendered and no placeholder text remains.
 - [ ] Submit the PDF through Canvas by September 20, 2026, 23:59 Kigali time.
 - [ ] Open the repository and video links from a logged-out browser session.

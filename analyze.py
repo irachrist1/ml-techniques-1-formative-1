@@ -61,24 +61,25 @@ def load_days():
 
 
 def coverage_robustness(rank, top_n=3):
-    """Could an incompletely observed area really belong in the top three?
+    """Sensitivity to imputing each area's observed mean into its missing bins.
 
-    Totals use observed bins only, so a poorly covered area is understated. The
-    most generous correction is to scale its total by 1/coverage. If even that
-    stays under the current cut-off, missingness cannot have displaced anyone.
+    This is an assumption-based scenario, not an upper bound: unobserved
+    activity could be larger or smaller than the observed mean.
     """
     partial = rank[rank.coverage < 1].copy()
     cutoff = float(rank.total_internet_activity.iloc[top_n - 1])
     if partial.empty:
         return {'areas_below_full_coverage': 0, 'top3_cutoff_total': cutoff,
-                'largest_rescaled_partial_total': 0.0, 'ranking_could_change': False}
+                'largest_rescaled_partial_total': 0.0, 'top3_changes_under_observed_mean_imputation': False}
     rescaled = partial.total_internet_activity / partial.coverage
     return {
         'areas_below_full_coverage': int(len(partial)),
         'minimum_coverage': float(rank.coverage.min()),
         'top3_cutoff_total': cutoff,
         'largest_rescaled_partial_total': float(rescaled.max()),
-        'ranking_could_change': bool(rescaled.max() > cutoff),
+        'assumption': 'Missing bins have the same mean as observed bins within each area',
+        'is_upper_bound': False,
+        'top3_changes_under_observed_mean_imputation': bool(rescaled.max() > cutoff),
     }
 
 

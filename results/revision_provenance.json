@@ -1,0 +1,13 @@
+{
+  "original_evaluated_commit": "a5e5111ee9ae5a567341e7c5e46c48992d51947b",
+  "retrained_commit": "565a2db50b52bb6cfdaf22bb1ad23557ce89e0d9",
+  "revision": "Post-audit increase from 20 to 80 epochs; no new untouched test period",
+  "previous_neural_fits": 30,
+  "ran_20_epochs": 22,
+  "patience_triggered_at_epoch_20": 1,
+  "cap_only_terminations": 21,
+  "minimum_recorded_validation_loss_at_epoch_20": 10,
+  "reference_seed": 42,
+  "reference_seed_note": "Reference convention retained; available commits do not independently establish prospective designation.",
+  "current_corrections": "Input validation, statistical interpretation and report layout; existing model weights/predictions retained."
+}

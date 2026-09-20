@@ -55,13 +55,13 @@
     "prediction": 405.1064756037104,
     "abs_error": 312.66243122564,
     "severity_train_std": 1.2383316073161093,
+    "previous_actual": 414.8725125910151,
     "next_step": {
       "actual": 348.8605951458994,
       "RidgeAR": 554.7595684504441,
       "LSTM": 635.222542998784,
       "CausalCNN": 512.6775982356004
-    },
-    "previous_actual": 414.8725125910151
+    }
   },
   "seed_count": 3,
   "reference_seed": 42,

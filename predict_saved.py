@@ -13,8 +13,14 @@ def predict(run,kind,timestamp):
     frame=pd.read_csv(ROOT/'results/selected_series.csv',index_col='timestamp_ms')
     target=pd.Timestamp(timestamp)
     if target.tz is None:raise ValueError('Include an explicit timezone offset in the target timestamp')
+    if target.value % (600000 * 1_000_000):
+        raise ValueError('Target must align to the 10-minute grid')
     milliseconds=target.value//1_000_000
-    history=frame.loc[(frame.index>=milliseconds-lookback*600000)&(frame.index<milliseconds),str(area)].to_numpy()
+    selected=frame.loc[(frame.index>=milliseconds-lookback*600000)&(frame.index<milliseconds),str(area)]
+    expected=np.arange(milliseconds-lookback*600000,milliseconds,600000,dtype=np.int64)
+    if not np.array_equal(selected.index.to_numpy(),expected):
+        raise ValueError('Required history must contain each preceding 10-minute timestamp exactly once')
+    history=selected.to_numpy()
     if len(history)!=lookback or not np.isfinite(history).all():raise ValueError('Required observed history is incomplete')
     x=((history-scaler['mean'])/scaler['std']).astype(np.float32)[None,:,None]
     if kind=='RidgeAR':

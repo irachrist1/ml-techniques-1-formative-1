@@ -1,4 +1,5 @@
-"""Create an evidence-based research report; render_report.py builds its PDF."""
+"""Build a concise research report from saved evidence; never invent a video link."""
+import argparse
 import json
 from pathlib import Path
 
@@ -7,268 +8,219 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent
 R = ROOT / 'results'
 
-VIDEO_PLACEHOLDER = 'PASTE_VIDEO_LINK_HERE'
-
 
 def table(headers, rows):
-    return '\n'.join(
-        ['| ' + ' | '.join(headers) + ' |', '| ' + ' | '.join(['---'] * len(headers)) + ' |']
-        + ['| ' + ' | '.join(map(str, row)) + ' |' for row in rows])
+    return '\n'.join(['| ' + ' | '.join(headers) + ' |',
+                      '| ' + ' | '.join(['---'] * len(headers)) + ' |'] +
+                     ['| ' + ' | '.join(map(str, row)) + ' |' for row in rows])
 
 
-def local_time(ms, fmt='%Y-%m-%d %H:%M %Z'):
-    return pd.to_datetime(ms, unit='ms', utc=True).tz_convert('Europe/Rome').strftime(fmt)
+def figure(number, caption, name):
+    return f'![Figure {number}. {caption}](../results/figures/{name})'
 
 
-def main():
+def build_report(video_url=None):
     eda = json.loads((R / 'eda_summary.json').read_text())
     study = json.loads((R / 'study_summary.json').read_text())
-    memory = json.loads((R / 'memory_benchmark.json').read_text())
-    config = json.loads((ROOT / 'configs/final.json').read_text())
-    ranking = pd.read_csv(R / 'area_ranking.csv')
+    memory = json.loads((R / 'memory_benchmark_recheck.json').read_text())
     metrics = pd.read_csv(R / 'reference_metrics.csv')
     tuning = pd.read_csv(R / 'tuning_log.csv')
     seeds = pd.read_csv(R / 'seed_summary.csv')
-    times = pd.read_csv(R / 'timing.csv')
-    val_test = pd.read_csv(R / 'validation_vs_test_ranking.csv')
+    ranking = pd.read_csv(R / 'validation_vs_test_ranking.csv')
+    seed_ranking = pd.read_csv(R / 'validation_vs_test_by_seed.csv')
+    validation = pd.read_csv(R / 'validation_metrics_all_seeds.csv')
     peak = pd.read_csv(R / 'peak_bias_summary.csv')
-
-    top = eda['top3']
-    areas = eda['areas']
-    winner = study['winners'][0]
-    failure = study['failure']
-    budget = study['epoch_budget_audit']
-    agreement = study['ranking_agreement']
-    underprediction = study['peak_underprediction']
-    params = study['parameters_by_model']
-    robust = eda['coverage_robustness']
-    stats = {s['square']: s for s in eda['area_stats']}
-    repo = json.loads((ROOT / 'output/repository.json').read_text())['url']
+    config = json.loads((ROOT / 'configs/final.json').read_text())
+    repo = 'https://github.com/irachrist1/ml-techniques-1-formative-1'
     pages = []
-
     pages.append(f'''# One-step mobile-network traffic forecasting in Milan
 
 **Christian Tonny | ML Techniques I | Formative Assignment 1**
 
-**Demo video:** {VIDEO_PLACEHOLDER}
-
-**Code:** {repo}
-
 ## 1. Introduction
 
-Network operators have to decide where to put capacity before demand arrives, so a forecast of the next few minutes of traffic has a practical use. This report asks a narrow version of that question: given only an area's own recent history, how well can three different sequential models predict its Internet activity ten minutes ahead, and does the answer change from one area to another?
+This study asks how three distinct sequential models compare for the next ten minutes of Internet activity, and whether their performance varies across Milan areas. The target is publisher-scaled activity, not bandwidth or a byte count. Forecasting this proxy can inform demand analysis, but its errors cannot be interpreted as megabytes or direct capacity requirements.
 
-The value being predicted is the dataset's Internet activity count for the next 10-minute interval. It is not bandwidth and not a byte count, so the error figures below are in activity units and cannot be read as megabytes.
-
-I process the whole November-December 2013 Milan collection, rank all 10,000 areas by total activity, and then compare a regularized linear autoregression, an LSTM and a causal dilated CNN on the busiest areas. Persistence and a daily-seasonal forecast are included so that any gain from the more complex models has something to beat. December 16-22 is held back and is never used to pick a model or a hyperparameter.
+The complete November-December 2013 collection is processed to rank 10,000 areas. RidgeAR, LSTM and CausalCNN are compared with immediate persistence and daily-seasonal persistence. December 16-22 supplies the evaluation week. The neural epoch budget was revised after the original results had been inspected; this report identifies the revised evaluation as a post-audit result, not a newly untouched test.
 
 ## 2. Related work and model motivation
 
-Barlacchi et al. [1] describe this dataset and document its daily, weekly and spatial variation. That is the reason I check temporal dependence per area instead of assuming one shared pattern, and the reason I do not attach land-use labels to square IDs. The paper's well-known Bocconi and Navigli examples are squares 4259 and 4456, not the 4159 and 4556 this assignment asks for, so no interpretation transfers.
+Barlacchi et al. [1] describe the spatial aggregation and scaling of telecommunications records and their daily and weekly variation. This motivates inspecting each area's temporal structure. No land-use identity is inferred for squares 4159 or 4556: the paper's often-quoted Bocconi and Navigli examples are squares 4259 and 4456, so neither label transfers to the squares this assignment specifies.
 
-Azari et al. [2] compare LSTM and ARIMA on cellular packet traffic and find that whether complexity pays depends on the traffic regime, the features available and how much training data there is. That is what pushed me to keep a simple statistical comparator alongside the neural models rather than assuming the neural models win. My RidgeAR is not their ARIMA: it has no moving-average error terms and no differencing operator, it is a penalized linear fit on lagged values.
+Azari et al. [2] compare LSTM and ARIMA on cellular packet traffic; the usefulness of complexity depends on features, training length and traffic conditions. Here, strong lag-one dependence motivates RidgeAR as a low-cost linear comparator. Its L2 penalty stabilizes correlated lag coefficients, but it cannot learn nonlinear interactions. It predicts a correction to persistence and is not ARIMA: there are no moving-average error terms.
 
-Bai et al. [3] argue that causal dilated convolutions can replace recurrence for sequence modeling. My CausalCNN uses that mechanism but not their full residual TCN, so their benchmark rankings should not be expected to carry over. Zhang and Patras [4] use spatial structure and longer horizons; that work sets out what my single-area, one-step setup is missing rather than giving me a number to compare against.
+LSTM tests whether gated nonlinear processing of a day's observations improves on linear lag weights. Its cell and hidden states evolve within each window, not between windows. This flexibility costs training and inference time; the one-day input cannot expose a complete weekly cycle.
 
-**Headline result:** on area {top[0]}, the busiest area, the best learned model at the reference seed is {winner['best_learned']} with RMSE {winner['best_learned_rmse']:.2f}, against persistence at {winner['persistence_rmse']:.2f}. Section 8 shows why I do not treat that as a general ranking.''')
+Bai et al. [3] motivate causal dilated convolutions as an alternative to recurrence. CausalCNN combines nonlinear local features across the input window, but omits their residual blocks and weight normalization. Its finite receptive field and padding are explicit below; published benchmark rankings are not assumed to transfer. Zhang and Patras [4] use spatial information and longer horizons, motivating extensions rather than a directly comparable accuracy target.
 
-    b, o = memory['runs']
+The reference-seed result on area 5161 favors CausalCNN (RMSE 118.16 versus persistence 134.88). Area and seed comparisons below qualify that result.''')
+
+    b, c = memory['runs']
+    memrows = [[r['mode'], f"{r['peak_rss_bytes']/1e6:.1f}",
+                f"{r['peak_rss_bytes_min']/1e6:.1f}-{r['peak_rss_bytes_max']/1e6:.1f}",
+                f"{r['wall_seconds']:.2f}", f"{r['max_dataframe_bytes']/1e6:.1f}"] for r in [b, c]]
+    cov = eda['coverage_robustness']
     pages.append(f'''## 3. Dataset, preparation and memory management
 
-Each daily file from the publisher holds square ID, interval timestamp, country code, SMS in/out, call in/out and Internet activity. The 61 files I need total {eda['raw_bytes'] / 1e9:.2f} GB and {eda['raw_rows']:,} rows. January 1 exists in the collection but falls outside the period, so it is excluded. Every file is checked against the publisher's MD5 before anything reads it, and timestamps are validated against a 10-minute grid using Europe/Rome calendar boundaries.
+The 61 daily files contain {eda['raw_rows']:,} rows and {eda['raw_bytes']/1e9:.2f} GB. January 1 is excluded. Downloads and daily preparation check publisher MD5 values. Timestamps use Europe/Rome boundaries and a ten-minute grid. Square IDs are validated before conversion to int32; activity remains float64.
 
-Internet activity is summed over the country-code rows for each square and interval. An empty Internet field is not an observed zero: a bin counts as missing only when no finite value exists for it at all. That leaves 8,784 intervals per area, with {eda['missing_square_time_bins']:,} of the 87,840,000 square-time bins missing. One caveat I cannot resolve from this data alone is that a bin can be observed but only partially covered across country codes, and there is no way to tell that apart from complete coverage.
+Country-code Internet values are summed within each square and interval. Empty fields are excluded, observed zeros are retained, and a bin is missing when it has no observed Internet values. There are {eda['missing_square_time_bins']:,} missing bins among 87,840,000. A positive observation count does not establish complete country coverage.
 
-The loader reads each file in chunks, keeps only square, timestamp and Internet, stores square IDs as int32 and leaves activity as float64. The accumulators are fixed-size sum and count arrays of 144 by 10,000, which is 17.28 MB regardless of how big the file is. Working one day at a time is what keeps the {eda['raw_bytes'] / 1e9:.2f} GB collection off the heap. Checksums and date validation also stop a day being ingested twice, though they say nothing about whether the original measurements are right.
+Projected, chunked input and fixed daily sum/count arrays (17.28 MB) avoid retaining the full collection in RAM. Arrays are not the whole process footprint: parser objects, validation and transient allocations also contribute. Raw files remain on disk, trading storage and I/O for bounded processing memory.
 
-{table(['Full-day method', 'Peak process RAM (MB)', 'Wall time (s)', 'Largest DataFrame (MB)'],
-       [[b['mode'], f"{b['peak_rss_bytes'] / 1e6:.1f}", f"{b['wall_seconds']:.2f}", f"{b['max_dataframe_bytes'] / 1e6:.1f}"],
-        [o['mode'], f"{o['peak_rss_bytes'] / 1e6:.1f}", f"{o['wall_seconds']:.2f}", f"{o['max_dataframe_bytes'] / 1e6:.1f}"]])}
+**Table 1. Repeated November 1 benchmark; decimal MB, medians over {memory['repeats_per_method']} isolated processes per method.**
 
-Both methods run in their own process on the same complete November 1 file, and peak RSS drops by {memory['peak_rss_reduction_percent']:.1f}%. The comparison is only worth anything if the outputs match, so the benchmark asserts that: the missing masks are identical, the observation counts are identical, and the largest difference between the two aggregates is {memory['max_abs_aggregation_difference']:.2g}, which is summation order. The wall times are a single run each with an uncontrolled filesystem cache, so I would not quote the speedup. What this does trade away is disk and repeated I/O, since the raw files stay where they are.
+{table(['Method', 'Peak RSS', 'RSS range', 'Wall seconds', 'Largest frame'], memrows)}
 
-![Figure 1. Total observed Internet activity by area over November-December. Totals exclude missing values, and coverage is audited separately.](../results/figures/traffic_distribution.png)
+The median peak reduction is {memory['peak_rss_reduction_percent']:.1f}%. Every pair matches missing masks and observation counts; maximum aggregate difference is {memory['max_abs_aggregation_difference']:.2g}. Order alternates, but cache and background load are uncontrolled. Chunked processing is the slower of the two here, and most of that gap is the per-chunk square-ID validation rather than the chunking itself: reading the same file with the IDs narrowed straight to int32 runs in about 1.8 s against 3.7 s with validation, so before that check was added the chunked path was marginally faster than the full-day load. I keep the check because narrowing first lets an out-of-range ID wrap into a valid one. Wall time excludes imports, checksums and serialization; RSS includes imports and processing before serialization. The older single-run 86.4% reduction is retained in `memory_benchmark.json`, not treated as a repeatable guarantee.
 
-The distribution has a long right tail. Median total activity is {ranking.total_internet_activity.median():,.0f}, the 99th percentile is {ranking.total_internet_activity.quantile(.99):,.0f}, and the maximum is {ranking.total_internet_activity.max():,.0f}. The top three squares are **{', '.join(map(str, top))}**. They hold {eda['top3_share'] * 100:.2f}% of observed activity and the top 1% of areas hold {eda['top1_percent_share'] * 100:.2f}%.
+{figure(1, 'Total observed activity across 10,000 areas over November-December.', 'traffic_distribution.png')}
 
-Because totals only count observed bins, a badly covered area is understated and could in principle be ranked too low. {robust['areas_below_full_coverage']} areas have less than full coverage and the worst sits at {robust['minimum_coverage'] * 100:.1f}%. If I scale every one of them up by 1/coverage, which is the most generous correction available, the largest becomes {robust['largest_rescaled_partial_total']:,.0f}, still well below the {robust['top3_cutoff_total']:,.0f} needed to reach third place. So missingness did not change who is in the top three. Ranking on full-period totals does mean the selection used the evaluation week's activity, which is a selection dependence worth naming even though it never touches model fitting.''')
+The distribution is right-skewed: median 274,706, 99th percentile 4,666,202, maximum 12,682,673. The top three are **5161, 5059, 5259**, holding 0.62% of total observed activity. Under the assumption that missing bins equal each area's observed mean, the largest adjusted partial-area total is {cov['largest_rescaled_partial_total']:,.0f}, below third place ({cov['top3_cutoff_total']:,.0f}). This sensitivity scenario is not an upper bound on missing traffic. Selection uses full-period totals as required, including the evaluation week; it is disclosed selection dependence.''')
 
-    a_top = stats[top[0]]
     pages.append(f'''## 4. Exploratory and temporal analysis
 
-![Figure 2. First two weeks for the three busiest areas plus squares 4159 and 4556. Each panel keeps its own scale, so compare shape as well as level.](../results/figures/first_two_weeks.png)
+{figure(2, 'November 1-14 for the top three areas and squares 4159 and 4556; panels retain their own scales.', 'first_two_weeks.png')}
 
-![Figure 3. Training-period autocorrelation and weekday/weekend daily profiles for area {top[0]}. The dashed lines are the +/-1.96/sqrt(n) white-noise band.](../results/figures/temporal_analysis.png)
+{figure(3, 'Training-only pairwise autocorrelation and weekday/weekend profiles for area 5161. Dashed lines are a white-noise reference, not confidence intervals for this seasonal series.', 'temporal_analysis.png')}
 
-The five series differ in more than scale. Areas {top[2]} and 4159 sit low through the first weekend and then jump to a weekday plateau, and they drop again on 9-10 November. Area {top[0]} runs the other way, with its highest peaks at the weekend. Area {top[1]} holds a broad daytime plateau with short bursts, and 4556 is the noisiest relative to its own mean and carries isolated one-interval spikes.
+Areas 5259 and 4159 have weekday plateaus and reduced weekend activity. Area 5161 has stronger weekend peaks; 5059 has broad daytime plateaus. Area 4556 contains isolated spikes and lower lag-one correlation, but its coefficient of variation is the lowest of the five. One calendar detail matters for reading the left edge of Figure 2: 1 November 2013 was All Saints' Day, a public holiday in Italy, and it fell on a Friday, so the opening low stretch is a three-day holiday weekend and the 9-10 November weekend is the cleaner comparison. These differences suggest different activity schedules without identifying land use or event causes.
 
-The weekday/weekend split is measurable, not just visible. Over the training dates, area {top[0]} averages {a_top['train_weekend_mean']:.0f} at weekends against {a_top['train_weekday_mean']:.0f} on weekdays, a ratio of {a_top['weekend_over_weekday']:.2f}, while area {top[2]} is at {stats[top[2]]['weekend_over_weekday']:.2f} and 4159 at {stats[4159]['weekend_over_weekday']:.2f}. One calendar detail matters for reading the left edge of Figure 2: 1 November is All Saints' Day, a public holiday in Italy, and it fell on a Friday in 2013. So the first low stretch is a three-day holiday weekend rather than an ordinary one, and the 9-10 November weekend is the cleaner comparison. These are activity schedules; I cannot tell from this data what land use produces them or what caused any individual spike.
+The two additional analyses are temporal dependence and weekday/weekend profiles. Lag-one correlation 0.982 motivates persistence and recent-history inputs; daily 0.894 and weekly 0.952 correlations motivate testing longer histories and future calendar features. Six hours is near zero (-0.017); the half-day trough is at twelve hours (-0.753). These are descriptive correlations, not proof that any architecture will forecast best.''')
 
-For area {top[0]}, correlation with the previous interval is {eda['top_area_acf']['1']:.3f}, with the same time yesterday {eda['top_area_acf']['144']:.3f}, and with the same time last week {eda['top_area_acf']['1008']:.3f}. All three are far above the {eda['acf_white_noise_band_95']:.3f} white-noise band, so none of them is in doubt. The interesting part is the gap between them: the 10-minute lag is much stronger than the daily lag, which is a direct argument for giving the models recent history rather than relying on the daily shape. Correlation at a six-hour lag is {eda['top_area_acf']['36']:.3f}, effectively nothing, which is the half-day trough of the daily cycle.''')
-
-    characteristics = [[s, f"{stats[s]['train_mean']:.1f}", f"{stats[s]['train_cv']:.2f}",
-                        f"{stats[s]['train_acf_1']:.3f}", f"{stats[s]['train_acf_144']:.3f}",
-                        f"{stats[s]['weekend_over_weekday']:.2f}", stats[s]['full_missing']] for s in areas]
+    rows = [[a['square'], f"{a['train_mean']:.1f}", f"{a['train_cv']:.2f}",
+             f"{a['train_acf_1']:.3f}", f"{a['train_acf_144']:.3f}",
+             f"{a['weekend_over_weekday']:.2f}"] for a in eda['area_stats']]
+    adf = eda['adf']
     pages.append(f'''### 4.1 Statistical characterization
 
-{table(['Area', 'Training mean', 'Training CV', 'Lag-1 corr.', 'Daily-lag corr.', 'Weekend/weekday', 'Missing bins'], characteristics)}
+**Table 2. Training-period characteristics; all five selected full-period series have zero missing bins.**
 
-CV is standard deviation over mean. The areas differ in level, in variability and in how much of their structure is daily rather than immediate, which is why I fit and score them separately. Note that a strong daily correlation does not mean yesterday's value is a good 10-minute forecast, and Section 7 shows exactly that.
+{table(['Area', 'Mean', 'CV', 'Lag 1', 'Lag 144', 'Weekend/weekday'], rows)}
 
-On the longest fully observed training stretch for area {top[0]} ({eda['adf']['segment_n']:,} points) the ADF statistic is {eda['adf']['statistic']:.3f} with p = {eda['adf']['pvalue']:.2e}, using {eda['adf']['lags']} lags chosen by AIC from a ceiling of {eda['adf']['max_lag_allowed']}. I set that ceiling above 144 on purpose, because a lag window shorter than one day cannot span the seasonal cycle the test is being asked to look through. After first differencing, p = {eda['difference_adf']['pvalue']:.0e}. The unit-root null is rejected, but that is all it is: the series plainly has a daily cycle and shifting levels, and ADF does not contradict either. A robust STL with period 144 puts the daily seasonal strength at {eda['stl_daily_strength']:.3f}, and {eda['stl_interpolated_points']} training points needed interpolation for that decomposition, which is descriptive only and never feeds a model.
+CV is sample standard deviation divided by mean. Area 5161 averages 1847 on weekends and 1357 on weekdays, whereas the weekend/weekday ratio is 0.42 in area 5259. These profiles support separate area-level evaluation. A repeated daily shape need not make yesterday's level a good ten-minute forecast.
 
-![Figure 4. Robust STL of the training period for area {top[0]}. The daily component dominates and the trend moves slowly, which is the pattern the models have to exploit.](../results/figures/stl_training.png)''')
+On {adf['segment_n']:,} complete training values, ADF gives statistic {adf['statistic']:.3f}, p={adf['pvalue']:.3g}. The regression includes a constant; AIC selects {adf['lags']} lags from a maximum of {adf['max_lag_allowed']}. Expanding the previous 30-lag search changed p from 1.35e-27 to 9.57e-04, demonstrating specification sensitivity. The expanded candidate set permits daily-lag dependence; it is not a universal rule that ADF must include a full seasonal cycle. Both specifications reject the unit-root null under their assumptions. Neither proves strict stationarity or removes seasonal structure; residual diagnostics and further specification checks remain limitations. First-differenced p={eda['difference_adf']['pvalue']:.2g} does not by itself justify differencing the forecasting target.
 
-    selected_rows = [['RidgeAR', config['models']['RidgeAR']['lookback'],
-                      f"alpha={config['models']['RidgeAR']['alpha']}; {params.get('RidgeAR', 0)} parameters"],
-                     ['LSTM', config['models']['LSTM']['lookback'],
-                      f"{config['models']['LSTM']['width']} gated units; Adam lr={config['models']['LSTM']['learning_rate']}; "
-                      f"max epochs={config['models']['LSTM']['epochs']}; patience={config['models']['LSTM']['patience']}; "
-                      f"{params.get('LSTM', 0)} parameters"],
-                     ['CausalCNN', config['models']['CausalCNN']['lookback'],
-                      f"{config['models']['CausalCNN']['width']} filters; dilations "
-                      f"{','.join(map(str, config['models']['CausalCNN']['dilations']))}; Adam lr={config['models']['CausalCNN']['learning_rate']}; "
-                      f"max epochs={config['models']['CausalCNN']['epochs']}; patience={config['models']['CausalCNN']['patience']}; "
-                      f"{params.get('CausalCNN', 0)} parameters"]]
+{figure(4, 'Robust STL on training dates, period 144. The daily seasonal component, changing trend and residual spikes describe different sources of variation.', 'stl_training.png')}
+
+Daily seasonal strength is {eda['stl_daily_strength']:.3f}, defined as max(0, 1 - Var(residual)/Var(residual + seasonal)). It is not the fraction of all observed variance explained. No training values needed interpolation. STL is descriptive and supplies no model inputs. ADF/STL outputs were recomputed; strong seasonality and rejection of a unit root are compatible.''')
+
+    modelrows = []
+    for kind, cfg in config['models'].items():
+        text = 'L2 alpha=10; fitted intercept' if kind == 'RidgeAR' else (
+            '16 gated units; final hidden state' if kind == 'LSTM' else '16 filters; kernel 3; dilations 1,2,4,8,16,32,64')
+        modelrows.append([kind, cfg['lookback'], text, study['parameters_by_model'][kind]])
     pages.append(f'''## 5. Methodology
 
-To predict x(t+1) a model sees only x(t-L+1) through x(t). Every candidate is required to have a fully observed 144-step history before a timestamp counts as eligible, even when its own lookback is shorter. That is deliberate: without it a short-lookback model would qualify on more timestamps and could win by being scored on an easier subset. Windows with a missing value or a time gap are dropped and counted, and no target is ever imputed.
+A target x(t+1) uses x(t-L+1), ..., x(t), with no future input. A fully observed 144-step history and finite target define eligibility for every candidate, including the earlier L=36 experiments. Missing-valued windows are excluded; an incomplete or unordered timestamp grid is rejected. The same mask prevents differing evaluation subsets. Each selected area has 5,328 training and 1,008 validation/test targets.
 
-{table(['Split', 'Local dates', 'Purpose'],
-       [['Training', 'Nov 1 - Dec 8', 'Weights and normalization'],
-        ['Validation', 'Dec 9 - 15', 'Tuning and early stopping'],
-        ['Test', 'Dec 16 - 22', 'Frozen evaluation']])}
+**Table 3. Target boundaries in Europe/Rome; end dates are inclusive.**
 
-Each area's mean and standard deviation come from its training values only. What the models actually learn is the standardized change, (x(t+1) - x(t))/sigma, and the forecast is x(t) plus sigma times the predicted change, clipped at zero. Every model therefore starts from persistence and only has to learn the correction. This is worth flagging early because it shapes the failure mode in Section 8.3: if the next interval is an isolated spike, the correction that minimizes squared error over the training set is close to zero, so the miss is built into the parameterization rather than being a tuning problem.
+{table(['Split', 'Dates', 'Use'], [['Training','Nov 1-Dec 8','Weights and scaling'],['Validation','Dec 9-15','Settings and stopping'],['Evaluation','Dec 16-22','Reported rolling one-step errors']])}
 
-RidgeAR flattens the normalized history into L lag features and minimizes squared error plus an L2 penalty, with a fitted intercept. The LSTM reads the L-by-1 sequence with tanh state activation and sigmoid gates and passes its final hidden state to a linear scalar head, with no dropout. CausalCNN stacks kernel-3 causal ReLU convolutions with increasing dilation and reads the last time position through a linear head.
+Per-area training mean mu and population standard deviation sigma standardize history to an (L,1) sequence. RidgeAR flattens it to L lag features. All models learn delta=(x(t+1)-x(t))/sigma. Reconstruction is max(0, x(t)+sigma*predicted_delta). Scaling uses only training observations; no target is imputed. Shuffling already formed training windows does not introduce future values. Test history can include newly observed test values for later one-step targets; this is not seven-day recursive forecasting.
 
-{table(['Selected model', 'Lookback (steps)', 'Architecture / penalty'], selected_rows)}
+**Table 4. Final model structures.**
 
-The CNN's receptive field is 1 + 2 x sum(dilations) = {1 + 2 * sum(config['models']['CausalCNN']['dilations'])} steps, which is more than the {config['models']['CausalCNN']['lookback']}-step input it is given. The last dilation stages therefore reach past the start of the window and add parameters without adding history, and trimming them would be the first thing I would try next.
+{table(['Model', 'Lookback', 'Structure', 'Parameters'], modelrows)}
 
-The neural output heads are initialized at zero. Adam uses gradient-norm clipping at 1, batch size 128, and seeded shuffling of the training windows. Shuffling here is safe because each window is built causally before shuffling, so reordering independent examples cannot move information backwards in time. Validation MSE drives early stopping, which restores the best weights. Each area gives 5,328 training targets and 1,008 validation targets after the common-history rule. Weights and normalization are fitted per area. The test-week predictions are rolling one-step forecasts that use observations already available up to the previous interval; they are not a seven-day recursive forecast from a single origin.''')
+Ridge minimizes squared correction error plus an L2 coefficient penalty, so regularization favors persistence. LSTM uses sigmoid gates and tanh cell updates with a linear output head, no dropout and no state carried between windows. CausalCNN uses causal ReLU convolutions and a scalar head at the final position. Its theoretical receptive field is 255; only 144 observations are available. Removing dilation 64 reduces the field to 127 and loses access to the oldest 17 observations, so trimming is an ablation, not free removal of unused history.
 
-    experiment_rows = [[r.experiment, r.model, f'{r.val_rmse:.2f}', int(r.epochs_run), f'{r.train_seconds:.1f}']
-                       for r in tuning.itertuples()]
-    pages.append(f'''## 6. Iterative experimentation
+Neural heads start at zero. Adam uses learning rate 0.001, gradient-norm clipping 1 and batch size 128. Early stopping monitors standardized validation MSE, patience 4, min_delta=1e-5, with an 80-epoch cap. Saved metadata distinguishes the restored epoch from the raw minimum-loss epoch. Weights and scaling are fitted separately per area.
 
-All tuning happened on area {top[0]}'s validation week. Each round was specified after reading the previous round's results, and the reasoning for every change is stored in the `configs/*.json` file that produced it, with the consolidated record in `results/tuning_log.csv`. Test data was never scored during tuning.
+The correction target does not force zero changes: minimizing squared error in delta is equivalent, up to scale, to squared forecast error after reconstruction before clipping. Limited inputs, model capacity, regularization and optimization can affect predictions. Their separate effects require controlled comparisons.''')
 
-{table(['Experiment', 'Model', 'Validation RMSE', 'Epochs run', 'Training seconds'], experiment_rows)}
+    tune_rows = [[r.experiment, r.model, f'{r.val_rmse:.2f}', int(r.epochs_run), f'{r.train_seconds:.3f}']
+                 for r in tuning.itertuples()]
+    pages.append(f'''## 6. Iterative experimentation and revision history
 
-Round 1 used six hours of history. Round 2 extended it to a full day, which improved all three models, so I kept it. For the CNN I also had to extend the dilations to cover the longer window, so that round changes two things at once for that model and is not a clean single-variable comparison. Round 3 tested capacity: raising RidgeAR's alpha from 1 to 10 helped slightly, doubling the LSTM to 32 units made it worse so I kept 16, and doubling the CNN to 16 filters helped slightly so I kept that.
+**Table 5. Area 5161, seed 42 validation experiments. These are measured runs, not equal compute budgets.**
 
-Round 4 came out of an audit rather than a hunch. Checking `epochs_run` against the epoch cap in the completed fits showed the cap, not the patience rule, was ending most neural training. On area {top[0]} the models stop on their own inside 20 epochs, which is exactly why three rounds of tuning on that area never exposed the problem. Raising the cap to {config['models']['LSTM']['epochs']} leaves area {top[0]}'s validation RMSE unchanged and lets the other areas train until early stopping actually fires. After the change, {budget['stopped_early']} of {budget['neural_fits']} neural fits stop early and the longest runs {budget['max_epochs_run']} epochs. I am treating this as fixing an arbitrary constraint rather than as tuning, since a budget that cuts training off before the stopping rule triggers is not a considered choice.
+{table(['Experiment','Model','Val RMSE','Epochs','Train seconds'], tune_rows)}
 
-One thing the table shows that I should not gloss over: RidgeAR has the lowest validation RMSE in every single round. Section 8 returns to this, because it does not match what happens on the test week.
+Round 2 improved all models by extending six-hour history to a day. CNN dilation depth also changed, so its improvement cannot be attributed to history alone. Round 3 retained Ridge alpha 10 and LSTM width 16; CNN width 16 reduced RMSE from 160.28 to 160.09. This 0.12% gain justified selection only under the stated minimum-validation-RMSE rule; it does not establish a reliable capacity benefit. Each candidate used one tuning seed.
 
-The selected configuration is shared across all five areas while weights and normalization are fitted per area, so this tests whether hyperparameters transfer, not what each area's best settings would be. Final neural fits use seeds 42, 43 and 44, with 42 fixed in advance as the plotting and reference run rather than picked afterwards. RidgeAR is deterministic, so repeating it only varies the timing.
+The original 20-epoch study had already produced test results when a stopping-history audit motivated round 4. Of 30 neural fits, 22 ran 20 epochs; one also triggered patience there, leaving 21 cap-only terminations. Ten had minimum recorded validation loss at the final epoch. The cap did not bind for area 5161 seed 42, but did for its CNN seeds 43 and 44. Increasing it uniformly to 80 is a budget-sensitivity revision, not evidence that finite budgets are inherently incorrect.
 
-![Figure 5. Training and validation loss for the reference fits on area {top[0]}. Early stopping watches validation loss; test data never influences the number of epochs.](../results/figures/learning_curves.png)
+All 30 revised neural fits end through patience; the longest runs {study['epoch_budget_audit']['max_epochs_run']} epochs. No test target enters training or early-stopping loss, but the revised week is not a fresh untouched holdout. Original results remain in commit a5e5111; `revision_provenance.json` records this chronology. Seeds 42-44 are retained, with 42 as the reference convention; available commits do not independently establish when that convention was first chosen.
 
-Model selection leans on validation RMSE because large misses are what matter for capacity decisions, with MAE and MAPE as secondary evidence. All errors are converted back to activity units before being reported.''')
+{figure(5, 'Training and validation correction MSE for area 5161, seed 42. Different chronological periods need not have equal loss levels.', 'learning_curves.png')}
 
-    results_pages = []
-    for area in top:
-        area_rows = []
-        for model in ['RidgeAR', 'LSTM', 'CausalCNN', 'Persistence', 'Daily seasonal']:
-            row = metrics[(metrics.area == area) & (metrics.model == model)].iloc[0]
-            area_rows.append([model, f'{row.mae:.2f}', f'{row.rmse:.2f}', f'{row.mape_percent_nonzero:.2f}'])
-        results_pages.append(f'''### Area {area}
+Validation below training loss can reflect different traffic regimes and training-loss averaging during updates. It is not by itself evidence of leakage or proof of convergence.''')
 
-{table([f'Model (seed {study["reference_seed"]})', 'MAE', 'RMSE', 'MAPE (%)'], area_rows)}''')
-    timing_rows = [[t.model, f'{t.train_seconds:.2f}', f'{1000 * t.batch_inference_seconds:.2f}',
-                    f'{t.single_inference_ms:.3f}']
-                   for t in pd.DataFrame(study['timing_by_model']).itertuples()]
-    scored = ', '.join(f'{w["area"]}: {w["test_n"]}' for w in study['winners'])
-    pages.append('## 7. Results and comparison\n\n' + '\n\n'.join(results_pages) + f'''
+    parts = ['## 7. Results and measured computation']
+    for number, area in enumerate(eda['top3'], 6):
+        subset = metrics[metrics.area == area]
+        rows = [[r.model, f'{r.mae:.2f}', f'{r.rmse:.2f}', f'{r.mape_percent_nonzero:.2f}'] for r in subset.itertuples()]
+        parts.extend([f'**Table {number}. Area {area}; seed 42, 1,008 eligible targets.**',
+                      table(['Model (seed 42)','MAE','RMSE','MAPE (%)'], rows)])
+    parts.append('MAE and RMSE use every eligible target. MAPE is 100 times mean absolute relative error over nonzero targets, with excluded counts recorded; an all-zero target set yields undefined MAPE. No epsilon is inserted. All five actual evaluation series have 1,008 scored targets and no zero targets. Activity-unit errors are reported after inverse transformation.')
+    timerows = [[r['model'], f"{r['train_seconds']:.3f}", f"{r['batch_inference_seconds']*1000:.2f}", f"{r['single_inference_ms']:.3f}"] for r in study['timing_by_model']]
+    parts.extend(['**Table 9. Mean timing across five areas and three fits per model.**', table(['Model','Training (s)','Test batch (ms)','Single (ms)'], timerows),
+                  'Apple M2 Pro, 16 GB RAM, CPU execution, four TensorFlow intra-op threads. Neural training includes construction, compilation and epoch-wise validation; Ridge includes fitting only. These scopes differ. Warm synchronous inference is the median of five full-batch and 30 single-sample calls per fit, then averaged. Windows, scaling and correction reconstruction are excluded. Measurements include local system noise and are not service-latency guarantees.'])
+    pages.append('\n\n'.join(parts))
 
-MAE is the mean absolute error, RMSE is the square root of mean squared error, and MAPE is 100 times the mean of |prediction - actual| / |actual| over nonzero targets. MAPE excludes zero targets and the excluded count is written to the CSV; no epsilon is substituted. MAE and RMSE use every eligible target. The test week has 1,008 intervals and all of them are scored for every area ({scored}).
+    for fig_number, area in enumerate(eda['top3'], 6):
+        pages.append('\n\n'.join([f'## Forecasts for area {area}',
+            'Observed and predicted activity use identical timestamps, reference seed 42 and already observed history.'] +
+            [figure(f'{fig_number}{letter}', f'{kind}, area {area}: December 16-22 rolling one-step forecasts.', f'forecast_{area}_{kind}.png')
+             for letter, kind in zip('abc', ['RidgeAR','LSTM','CausalCNN'])]))
 
-{table(['Model', 'Training (s)', 'Full test batch (ms)', 'Single forecast (ms)'], timing_rows)}
+    rankrows = [[r.area,r.validation_best,r.test_best] for r in ranking.itertuples()]
+    seedrows = []
+    for area in eda['areas']:
+        sub = seeds[seeds.area == area].set_index('model')
+        seedrows.append([area]+[f"{sub.loc[k,'rmse_mean']:.2f} ({sub.loc[k,'rmse_std']:.2f})" for k in ['RidgeAR','LSTM','CausalCNN']])
+    disagreements = seed_ranking.groupby('seed').agree.apply(lambda x: int((~x).sum()))
+    v = validation[(validation.area == 5161) & (validation.model == 'CausalCNN')].sort_values('seed')
+    pk = peak[peak.area == 5161].set_index('model')
+    pages.append(f'''## 8. Comparative discussion
 
-Timing is averaged over five areas and three fits per model on an Apple M2 Pro with 16 GB RAM, CPU only, four TensorFlow intra-op threads. The two scopes are not identical and should not be compared as if they were: neural training time includes building and compiling the graph and running validation each epoch, while the Ridge figure is the solve alone. Inference is measured warm and synchronously, as the median of five full-batch calls and of 30 single-sample calls per fit. It covers the forward pass only, so window construction, scaling and reconstructing the forecast are excluded for all three models.''')
+Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; this is a small observed loss, not a demonstrated statistical tie. Daily-seasonal persistence is worse in all five areas. This supports the immediate baseline at this horizon; it does not show that seasonal information is useless in a richer model.
 
-    for i, area in enumerate(top):
-        letter = chr(ord('a'))
-        figure_number = 6 + i
-        pages.append(f'''## Forecasts for area {area}
+**Table 10. Validation/test winners at seed 42 only.**
 
-These are the three required model comparisons for this area. All three use the same observed targets and the same reference seed, and each prediction uses only observations available up to the previous interval.
+{table(['Area','Validation best','Test best'], rankrows)}
 
-![Figure {figure_number}{letter}. RidgeAR, area {area}.](../results/figures/forecast_{area}_RidgeAR.png)
+The number of ranking disagreements is {disagreements.loc[42]}/5 for seed 42, {disagreements.loc[43]}/5 for seed 43 and {disagreements.loc[44]}/5 for seed 44. On area 5161, CNN validation RMSE is {', '.join(f'{x:.2f}' for x in v.rmse)}, while Ridge remains 152.39. Thus optimization variation changes the validation winner; the reference-seed reversal cannot be attributed solely to a difference between weeks. Three seeds do not measure uncertainty across future weeks.
 
-![Figure {figure_number}{chr(ord("a") + 1)}. LSTM, area {area}.](../results/figures/forecast_{area}_LSTM.png)
+**Table 11. Evaluation RMSE mean (sample SD), three seeds.**
 
-![Figure {figure_number}{chr(ord("a") + 2)}. CausalCNN, area {area}.](../results/figures/forecast_{area}_CausalCNN.png)''')
+{table(['Area','RidgeAR','LSTM','CausalCNN'], seedrows)}
 
-    improvements = ' '.join(
-        f"Area {w['area']}: {w['best_learned']}, {w['improvement_over_persistence_percent']:.1f}% below persistence."
-        for w in study['winners'])
-    top_seed = seeds[seeds.area == top[0]]
-    seed_text = ' '.join(f"{r.model}: mean RMSE {r.rmse_mean:.2f} (SD {r.rmse_std:.2f})." for r in top_seed.itertuples())
-    ratio = {t['model']: t['train_seconds'] for t in study['timing_by_model']}
-    vt_rows = [[int(r.area), r.validation_best, r.test_best,
-                f'{r.val_RidgeAR:.2f} / {r.test_RidgeAR:.2f}',
-                f'{r.val_LSTM:.2f} / {r.test_LSTM:.2f}',
-                f'{r.val_CausalCNN:.2f} / {r.test_CausalCNN:.2f}'] for r in val_test.itertuples()]
-    peak_top = peak[peak.area == top[0]]
-    peak_rows = [[r.model, f'{r.lowest_decile_bias:+.1f}', f'{r.highest_decile_bias:+.1f}',
-                  f'{r.highest_decile_mae:.1f}'] for r in peak_top.itertuples()]
-    beats = []
-    for w in study['winners']:
-        a = metrics[(metrics.area == w['area']) & (metrics.model.isin(['RidgeAR', 'LSTM', 'CausalCNN']))]
-        persist = float(metrics[(metrics.area == w['area']) & (metrics.model == 'Persistence')].rmse.iloc[0])
-        beats.extend([(w['area'], r.model, float(r.rmse), persist) for r in a.itertuples() if r.rmse >= persist])
-    if beats:
-        misses = '; '.join(f'area {a} {m} at {r:.2f} against persistence {q:.2f}' for a, m, r, q in beats)
-        beat_text = (f'{15 - len(beats)} of the 15 area-model fits beat persistence at the reference seed. '
-                     f'The exception is {misses}, which is a tie rather than a loss but is worth naming.')
-    else:
-        beat_text = 'All 15 area-model fits beat persistence at the reference seed.'
-    pages.append(f'''## 8. Discussion
+On area 5259, Ridge wins at seed 42, but CNN has the lower three-seed mean. On area 5059, the lower training CV and stronger daily dependence coincide with competitive linear forecasts; five selected areas do not establish a causal link between traffic characteristics and architecture ranking.
 
-{beat_text} {improvements}
+**Table 12. Area 5161 signed error by realized-target decile; 101 observations per extreme decile.**
 
-Repeated seeds on area {top[0]} give: {seed_text} That spread is the right context for the differences between the two neural models, which are smaller than it. Average neural training costs {ratio['LSTM'] / ratio['RidgeAR']:.0f} times as long for the LSTM and {ratio['CausalCNN'] / ratio['RidgeAR']:.0f} times as long for the CNN as RidgeAR on this machine, against {params.get('LSTM', 0)} and {params.get('CausalCNN', 0)} parameters versus {params.get('RidgeAR', 0)}. Given how strong the 10-minute dependence is, there is not much room left above persistence for a more expressive model to claim at this horizon.
+{table(['Model','Low-decile bias','High-decile bias','High-decile MAE'], [[k,f"{pk.loc[k,'lowest_decile_bias']:+.1f}",f"{pk.loc[k,'highest_decile_bias']:+.1f}",f"{pk.loc[k,'highest_decile_mae']:.1f}"] for k in ['RidgeAR','LSTM','CausalCNN']])}
 
-The daily-seasonal baseline is much worse than plain persistence everywhere, which is the clearest result in the study. Area {top[0]} has a daily-lag correlation of {stats[top[0]]['train_acf_144']:.3f} and yesterday's value is still a bad forecast for ten minutes ahead. Strong periodicity tells you about shape, not about level at short range.
+Across areas, 14/15 high-decile biases are negative and 13/15 low-decile biases positive. These bins condition on realized targets; even an optimal conditional-mean forecast can miss unpredictable extremes in this direction. The pattern is useful for diagnosing capacity-related errors but does not identify the correction target as their cause. A direct-target ablation and prospective threshold-based diagnostics would test that explanation.''')
 
-### 8.1 Validation and test do not agree
+    failure = study['failure']
+    nextstep = failure['next_step']
+    nexttext = ('The following interval has actual '+f"{nextstep['actual']:.2f}"+', compared with '+', '.join(f"{k} {nextstep[k]:.2f}" for k in ['RidgeAR','LSTM','CausalCNN'])+'.' if nextstep else 'No following scored interval is available for this boundary event.')
+    stamp = pd.to_datetime(failure['timestamp_ms'], unit='ms', utc=True).tz_convert('Europe/Rome').strftime('%Y-%m-%d %H:%M %Z')
+    pages.append(f'''### 8.1 Failure case and limits of the explanation
 
-{table(['Area', 'Validation best', 'Test best', 'RidgeAR val/test', 'LSTM val/test', 'CausalCNN val/test'], vt_rows)}
+{figure(9, 'Largest reference-seed absolute error divided by area-specific training sample SD; selected retrospectively for diagnosis.', 'failure_case.png')}
 
-The two weeks disagree about the winner in {agreement['disagree']} of {agreement['areas']} areas. This is the result I trust least in the whole study and the one I would chase first. On area {top[0]} RidgeAR is clearly ahead on the validation week and clearly behind on the test week, and the gap in each direction is larger than the seed spread, so it is not optimization noise. With one tuning week and one test week there is no way to tell from this experiment whether the test week or the validation week is the unusual one. It does mean the headline in Section 2 should be read as "what happened on 16-22 December", not as a ranking of the three architectures.
+The selected miss is area {failure['area']} at {stamp}. {failure['model']} predicts {failure['prediction']:.2f} against {failure['actual']:.2f}, an absolute error of {failure['abs_error']:.2f}, or {failure['severity_train_std']:.2f} training SDs. Activity rises from 414.87 to 717.77 and then falls to 348.86. All three models miss the rise and overshoot the fall. {nexttext}
 
-### 8.2 All three models shrink toward the recent level
+The spike enters the next window and persistence anchor, which is consistent with the observed lagging response. The correction could in principle cancel that anchor; this single case does not prove an unavoidable architectural failure or that further tuning cannot help. The maximum-error selection is intentionally unrepresentative. No verified event cause is available, and a measurement anomaly remains possible.
 
-{table([f'Model (area {top[0]})', 'Lowest-decile bias', 'Highest-decile bias', 'Highest-decile MAE'], peak_rows)}
+A defensible next experiment would compare direct-target and correction-target models under matched validation and compute protocols, then assess abrupt changes on additional periods. Neighboring-area observations may contain predictive information, but that benefit has not been demonstrated. An asymmetric loss could prioritize costly underprediction, with its accuracy/calibration trade-off evaluated separately.
 
-Splitting the test errors by actual traffic decile shows the same shape almost everywhere: {underprediction['negative_highest_decile_bias']} of {underprediction['combinations']} area-model combinations under-forecast the busiest decile, {underprediction['positive_lowest_decile_bias']} of {underprediction['combinations']} over-forecast the quietest, and the worst case is {underprediction['worst_highest_decile_bias']:.1f}. So the models mostly shrink toward the recent level, compressing both ends of the range. That follows from what they are trained to do. The target is a correction to persistence, the correction is fitted to minimize squared error across mostly ordinary intervals, and the result is a conservative estimate that lags any sharp move in either direction. It is also why the peaks, which are the intervals a capacity decision would actually care about, are the ones the models handle worst.
+## 9. Conclusion and future work
 
-### 8.3 Failure case
+The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR remains competitive at much lower measured computation cost. Rankings depend on area, seed and week, so no architecture is declared universally best.
 
-![Figure 9. The largest seed-{study['reference_seed']} miss after scaling each area's error by its training standard deviation. Chosen after the models were frozen.](../results/figures/failure_case.png)
+The main limitations are one reused evaluation week, full-period area selection, hyperparameters developed mainly on one area/seed, partial aggregation coverage and unequal training scopes. Next steps are prospective area selection, rolling-origin evaluation with explicitly reserved periods, matched-budget comparisons and input/target ablations. Daily and weekly dependence motivate calendar or longer-history features, but their value must be tested rather than inferred from correlation alone.''')
 
-The worst standardized miss is area {failure['area']} at {local_time(failure['timestamp_ms'])}. {failure['model']} predicts {failure['prediction']:.2f} against an observed {failure['actual']:.2f}, an error of {failure['abs_error']:.2f}, or {failure['severity_train_std']:.2f} training standard deviations. Activity goes {failure['previous_actual']:.2f} then {failure['actual']:.2f} then {failure['next_step']['actual']:.2f}: a single interval spike with nothing in the preceding history that points to it.
+    video = f'[Individual presentation]({video_url})' if video_url else 'Recording and accessible link pending; no video is included in this version.'
+    pages.append(f'''## AI assistance disclosure
 
-Two things are worth taking from this. First, the miss is structural rather than a tuning failure, for the reason given in Section 5 — with a persistence-correction target the loss-minimizing response to an unpredictable one-interval jump is to predict roughly no change. Second, look at the step after the spike. All three models over-predict it ({', '.join(f"{k} {failure['next_step'][k]:.0f}" for k in ['RidgeAR', 'LSTM', 'CausalCNN'])} against an actual of {failure['next_step']['actual']:.0f}), because the spike is now in their input and the persistence anchor carries it forward. So a single outlier costs two errors, not one. A univariate model has no event context and no neighbouring-area signal, so I cannot say what caused the spike, and with one interval involved I cannot rule out a measurement artifact either.''')
-
-    seed_rows = [[int(r.area), r.model, f'{r.rmse_mean:.2f}', f'{r.rmse_std:.2f}'] for r in seeds.itertuples()]
-    pages.append(f'''## 9. Conclusion and future work
-
-On the busiest area, {winner['best_learned']} gives the lowest reference-seed RMSE at {winner['best_learned_rmse']:.2f} against persistence at {winner['persistence_rmse']:.2f}. {14 - len(beats) + 1 if beats else 15} of the 15 area-model fits beat persistence, the one exception being a tie. The daily-seasonal baseline is far behind everywhere, which says the useful signal at a 10-minute horizon is recent level rather than daily shape.
-
-I am less confident about the ranking between the three models than about that. Validation and test disagree on {agreement['disagree']} of {agreement['areas']} areas, the differences between the two neural models are inside the seed spread, and RidgeAR wins on validation in every tuning round while losing on test for the busiest area. What the evidence does support is that a 145-parameter linear model is a serious competitor here, and that anything more expensive needs to show a gain that survives more than one week before it is worth the training cost.
-
-The main limitations are one held-out week, five areas chosen using full-period totals, hyperparameters tuned on a single area and single seed, and three seeds that measure optimization variance rather than uncertainty about future weeks. The epoch cap in the first three rounds is a concrete example of how a constraint set on one area can quietly distort the others, and I only caught it by auditing `epochs_run` against the budget. Next steps I would actually run: rolling-origin evaluation across several weeks so the ranking question can be settled, area selection made prospectively from a period before the evaluation window, matched compute budgets per model, trimming the CNN dilations to the input length, and adding neighbouring-area inputs to see whether spikes like the one in Section 8.3 are predictable from space even when they are not predictable from time.
-
-## Appendix A. Sensitivity across seeds
-
-{table(['Area', 'Model', 'RMSE mean (3 seeds)', 'RMSE sample SD'], seed_rows)}
-
-These standard deviations cover seeds {', '.join(map(str, [42, 43, 44]))} and describe how much the optimizer moves, nothing else. They are not confidence intervals and they say nothing about a different test week or a different area. Model-specific plots for squares 4159 and 4556 are in `results/figures/` alongside the nine primary-area plots, and every per-timestamp prediction is kept so the numbers can be rechecked independently.
+OpenAI Codex and other AI assistance contributed substantially to code, experimental design, model implementation, testing, analysis, figures and report drafting, including the subsequent audit and corrections. The numerical results derive from the published dataset; artificial values are used in tests only. This disclosure describes assistance and does not attest to independent student authorship or demonstrated understanding. The student remains responsible for reviewing and explaining the submitted work under the course policy.
 
 ## References
 
@@ -280,21 +232,33 @@ These standard deviations cover seeds {', '.join(map(str, [42, 43, 44]))} and de
 
 [4] C. Zhang and P. Patras, "Long-Term Mobile Traffic Forecasting Using Deep Spatio-Temporal Neural Networks," arXiv:1712.08083, 2017. https://arxiv.org/abs/1712.08083.
 
-[5] Telecom Italia, "Telecommunications - SMS, Call, Internet - MI," Harvard Dataverse, 2015. https://doi.org/10.7910/DVN/EGZHFV. Data under ODbL 1.0; [from BigDataChallenge contest](http://www.telecomitalia.com/tit/en/bigdatachallenge.html).
+[5] Telecom Italia, "Telecommunications - SMS, Call, Internet - MI," Harvard Dataverse, 2015, doi: 10.7910/DVN/EGZHFV. https://doi.org/10.7910/DVN/EGZHFV. ODbL 1.0; attribution and terms are retained in DATA_LICENSE.md.
 
-[6] Source code and reproducibility materials: [GitHub repository]({repo}).
+[6] C. Tonny, "ML Techniques I formative assignment: source code and reproducibility materials," GitHub. [Repository]({repo}).
 
-[7] Demo video: {VIDEO_PLACEHOLDER}''')
+[7] Individual project video: {video}
 
-    output = ROOT / 'output'
-    output.mkdir(exist_ok=True)
-    target = output / 'report.md'
-    if target.exists():
-        raise FileExistsError('Do not overwrite an existing report; archive it explicitly first')
-    text = '\n\n---PAGE---\n\n'.join(pages)
-    for seam in ['## Appendix A.', '### 4.1 Statistical characterization']:
-        text = text.replace('\n\n---PAGE---\n\n' + seam, '\n\n' + seam)
-    target.write_text(text + '\n')
+[8] statsmodels developers, "adfuller: Augmented Dickey-Fuller unit root test," statsmodels documentation. https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.adfuller.html.
+
+[9] statsmodels developers, "acf: Autocorrelation function," statsmodels documentation. https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.acf.html.
+
+[10] R. B. Cleveland, W. S. Cleveland, J. E. McRae, and I. Terpenning, "STL: A Seasonal-Trend Decomposition Procedure Based on Loess," Journal of Official Statistics, vol. 6, no. 1, pp. 3-73, 1990. Method implemented by statsmodels STL: https://www.statsmodels.org/stable/generated/statsmodels.tsa.seasonal.STL.html.''')
+    # Method citations occur with the relevant analyses, as well as in the bibliography.
+    text = '\n\n---PAGE---\n\n'.join(pages) + '\n'
+    return text.replace('ADF gives statistic', 'ADF [8] gives statistic').replace('Dashed lines are a white-noise reference', 'Dashed lines are a white-noise reference (see reference 9)').replace('Robust STL on training dates', 'Robust STL (see reference 10) on training dates')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--replace', action='store_true', help='Explicitly replace the editable report; preserve manual edits first')
+    parser.add_argument('--video-url')
+    args = parser.parse_args()
+    if args.video_url and not args.video_url.startswith(('https://', 'http://')):
+        parser.error('--video-url must be an HTTP(S) link')
+    target = ROOT / 'output/report.md'
+    if target.exists() and not args.replace:
+        raise FileExistsError('Report exists; edit it directly or explicitly use --replace after preserving edits')
+    target.write_text(build_report(args.video_url))
     print(target)
 
 

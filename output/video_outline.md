@@ -9,7 +9,7 @@ target is an activity count, not GB. Say why a short-horizon forecast is useful 
 
 ## 0:45-2:00 - Real data and memory
 
-Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark.json`.
+Show `prepare_day.py`, the dataset DOI in `DATA_LICENSE.md` and `results/memory_benchmark_recheck.json`.
 Cover: summing country-code rows, why an empty Internet field is not an observed zero, and why
 chunked loading keeps peak memory bounded. Stress that the benchmark compares two processes on
 the same complete day and asserts the outputs match before reporting the reduction.
@@ -28,8 +28,7 @@ Open `experiments.py`. Walk through training-only scaling, the past-only window,
 coefficients, the LSTM gates and the CNN's causal receptive field
 (255 steps against a
 144-step input). Show `configs/final.json` and justify one
-change from `results/tuning_log.csv`. Explain why 16-22 December never picked a hyperparameter, and
-why rolling one-step prediction is allowed to use the already observed part of the test week.
+change from `results/tuning_log.csv`. Explain that the budget revision occurred after original test results were available, so this is a reevaluation on the same week. Explain why rolling one-step prediction is allowed to use the already observed part of the test week.
 
 ## 4:45-6:15 - Results and live demonstration
 
@@ -49,15 +48,13 @@ camera. If the script reports an incomplete history, pick another fully observed
 ## 6:15-7:45 - The two results I am least comfortable with
 
 Show `results/validation_vs_test_ranking.csv`: validation and test disagree about the winner in
-5 of 5 areas. Then `results/peak_bias_summary.csv`: all
-15 area-model combinations under-forecast the busiest
-decile and over-forecast the quietest. Tie both to the persistence-correction target.
+5 of 5 areas. Then `results/peak_bias_summary.csv`: most combinations under-forecast the busiest decile and over-forecast the quietest. Conditioning on the realized target can produce this pattern; it does not establish that the correction parameterization caused it.
 
 Show `failure_case.png`: area 4556, error 313
 (1.24 training SD), and point out that the step *after* the spike is
 also wrong because the spike is now in the input.
 
-Mention the epoch-cap audit: 0 of 30 neural fits now stop
+Mention the epoch-cap audit: 30 of 30 neural fits now stop
 early rather than hitting the budget, after round four raised the cap.
 
 ## 7:45-9:00 - Conclusion and next experiment

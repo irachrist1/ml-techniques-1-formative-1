@@ -1,0 +1,87 @@
+{
+  "recorded_utc": "2026-09-20T09:23:46.307444+00:00",
+  "input": "sms-call-internet-mi-2013-11-01.txt",
+  "input_bytes": 322874887,
+  "input_md5": "658c49f8e3c7910bd3bb2bafbf62cdce",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "machine": "arm64",
+  "python": "3.12.14",
+  "numpy": "2.3.5",
+  "pandas": "2.2.3",
+  "repeats_per_method": 3,
+  "scope": "Complete November 1 file; separate process per sample; alternating order; filesystem cache and background load uncontrolled. Peak before output serialization; wall time excludes imports, checksum and serialization. Parser transient allocations and sum/count arrays are included in peak RSS.",
+  "runs": [
+    {
+      "mode": "baseline",
+      "wall_seconds": 2.3190215000067838,
+      "wall_seconds_min": 2.226380124979187,
+      "wall_seconds_max": 2.6922265839530155,
+      "peak_rss_bytes": 1087569920.0,
+      "peak_rss_bytes_min": 773472256,
+      "peak_rss_bytes_max": 1125400576,
+      "max_dataframe_bytes": 309928132.0,
+      "max_dataframe_bytes_min": 309928132,
+      "max_dataframe_bytes_max": 309928132
+    },
+    {
+      "mode": "chunked",
+      "wall_seconds": 3.7834067919757217,
+      "wall_seconds_min": 3.663022666994948,
+      "wall_seconds_max": 4.411111875029746,
+      "peak_rss_bytes": 384663552.0,
+      "peak_rss_bytes_min": 347144192,
+      "peak_rss_bytes_max": 391086080,
+      "max_dataframe_bytes": 2000132.0,
+      "max_dataframe_bytes_min": 2000132,
+      "max_dataframe_bytes_max": 2000132
+    }
+  ],
+  "samples": [
+    {
+      "repeat": 1,
+      "mode": "baseline",
+      "wall_seconds": 2.6922265839530155,
+      "peak_rss_bytes": 773472256,
+      "max_dataframe_bytes": 309928132
+    },
+    {
+      "repeat": 1,
+      "mode": "chunked",
+      "wall_seconds": 3.7834067919757217,
+      "peak_rss_bytes": 391086080,
+      "max_dataframe_bytes": 2000132
+    },
+    {
+      "repeat": 2,
+      "mode": "chunked",
+      "wall_seconds": 4.411111875029746,
+      "peak_rss_bytes": 347144192,
+      "max_dataframe_bytes": 2000132
+    },
+    {
+      "repeat": 2,
+      "mode": "baseline",
+      "wall_seconds": 2.3190215000067838,
+      "peak_rss_bytes": 1087569920,
+      "max_dataframe_bytes": 309928132
+    },
+    {
+      "repeat": 3,
+      "mode": "baseline",
+      "wall_seconds": 2.226380124979187,
+      "peak_rss_bytes": 1125400576,
+      "max_dataframe_bytes": 309928132
+    },
+    {
+      "repeat": 3,
+      "mode": "chunked",
+      "wall_seconds": 3.663022666994948,
+      "peak_rss_bytes": 384663552,
+      "max_dataframe_bytes": 2000132
+    }
+  ],
+  "peak_rss_reduction_percent": 64.63091292557999,
+  "same_missing_mask": true,
+  "same_observation_counts": true,
+  "max_abs_aggregation_difference": 1.8189894035458565e-12
+}

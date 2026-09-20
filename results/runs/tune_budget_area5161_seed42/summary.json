@@ -1,7 +1,7 @@
 {
   "config": {
     "id": "budget",
-    "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+    "rationale": "Post-audit budget sensitivity after the original test week had already been evaluated. Of 30 prior neural fits, 22 ran 20 epochs; one also triggered patience at epoch 20, so 21 were cap-only terminations. Ten had their lowest recorded validation loss at epoch 20. The cap did not bind on area 5161 seed 42, but did on its CNN seeds 43 and 44. Raise the cap uniformly to 80 while retaining all other settings. A finite epoch budget is legitimate; this checks the adequacy of the earlier budget and is not evidence of training/test leakage.",
     "models": {
       "RidgeAR": {
         "lookback": 144,
@@ -46,7 +46,7 @@
         "lookback": 144,
         "alpha": 10
       },
-      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "rationale": "Post-audit budget sensitivity after the original test week had already been evaluated. Of 30 prior neural fits, 22 ran 20 epochs; one also triggered patience at epoch 20, so 21 were cap-only terminations. Ten had their lowest recorded validation loss at epoch 20. The cap did not bind on area 5161 seed 42, but did on its CNN seeds 43 and 44. Raise the cap uniformly to 80 while retaining all other settings. A finite epoch budget is legitimate; this checks the adequacy of the earlier budget and is not evidence of training/test leakage.",
       "scaler": {
         "mean": 1511.417170677449,
         "std": 1389.7001802967254,
@@ -95,7 +95,7 @@
         "epochs": 80,
         "patience": 4
       },
-      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "rationale": "Post-audit budget sensitivity after the original test week had already been evaluated. Of 30 prior neural fits, 22 ran 20 epochs; one also triggered patience at epoch 20, so 21 were cap-only terminations. Ten had their lowest recorded validation loss at epoch 20. The cap did not bind on area 5161 seed 42, but did on its CNN seeds 43 and 44. Raise the cap uniformly to 80 while retaining all other settings. A finite epoch budget is legitimate; this checks the adequacy of the earlier budget and is not evidence of training/test leakage.",
       "scaler": {
         "mean": 1511.417170677449,
         "std": 1389.7001802967254,
@@ -153,7 +153,7 @@
         "epochs": 80,
         "patience": 4
       },
-      "rationale": "Checking the completed runs showed that the 20-epoch cap, not early stopping, was ending most neural fits: 22 of 30 ran the full 20 epochs and 10 of those had their lowest validation loss on the very last epoch. The cap did not bind on area 5161 seed 42, which is why the first three rounds never exposed it. A budget that stops training before the stopping rule fires is an arbitrary constraint rather than a tuned choice, so raise the cap to 80 and let patience=4 decide. Nothing else changes.",
+      "rationale": "Post-audit budget sensitivity after the original test week had already been evaluated. Of 30 prior neural fits, 22 ran 20 epochs; one also triggered patience at epoch 20, so 21 were cap-only terminations. Ten had their lowest recorded validation loss at epoch 20. The cap did not bind on area 5161 seed 42, but did on its CNN seeds 43 and 44. Raise the cap uniformly to 80 while retaining all other settings. A finite epoch budget is legitimate; this checks the adequacy of the earlier budget and is not evidence of training/test leakage.",
       "scaler": {
         "mean": 1511.417170677449,
         "std": 1389.7001802967254,

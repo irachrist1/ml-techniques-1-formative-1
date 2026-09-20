@@ -26,7 +26,9 @@
     "minimum_coverage": 0.08447176684881604,
     "top3_cutoff_total": 10436792.131817942,
     "largest_rescaled_partial_total": 891901.9747159997,
-    "ranking_could_change": false
+    "assumption": "Missing bins have the same mean as observed bins within each area",
+    "is_upper_bound": false,
+    "top3_changes_under_observed_mean_imputation": false
   },
   "training_end_exclusive": "2013-12-09 Europe/Rome",
   "top_area_acf": {

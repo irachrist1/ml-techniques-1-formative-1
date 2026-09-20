@@ -1,7 +1,7 @@
 {
   "config": {
     "id": "selected",
-    "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
+    "rationale": "Rounds 1-3 selected per-model settings using area 5161, seed 42 validation RMSE: full-day history for all models, Ridge alpha 10, LSTM width 16 and CNN width 16. A subsequent audit of the already evaluated 20-epoch study motivated raising the neural cap to 80 for all areas and seeds. This revision used stopping histories, not an optimization of test RMSE, but occurred after the original December 16-22 results were available. The revised results are a post-audit reevaluation on the same week, not a fresh untouched holdout. The small CNN validation improvement does not establish superiority.",
     "models": {
       "RidgeAR": {
         "lookback": 144,
@@ -46,7 +46,7 @@
         "lookback": 144,
         "alpha": 10
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
+      "rationale": "Rounds 1-3 selected per-model settings using area 5161, seed 42 validation RMSE: full-day history for all models, Ridge alpha 10, LSTM width 16 and CNN width 16. A subsequent audit of the already evaluated 20-epoch study motivated raising the neural cap to 80 for all areas and seeds. This revision used stopping histories, not an optimization of test RMSE, but occurred after the original December 16-22 results were available. The revised results are a post-audit reevaluation on the same week, not a fresh untouched holdout. The small CNN validation improvement does not establish superiority.",
       "scaler": {
         "mean": 1314.1242884168532,
         "std": 1119.285422923653,
@@ -102,7 +102,7 @@
         "epochs": 80,
         "patience": 4
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
+      "rationale": "Rounds 1-3 selected per-model settings using area 5161, seed 42 validation RMSE: full-day history for all models, Ridge alpha 10, LSTM width 16 and CNN width 16. A subsequent audit of the already evaluated 20-epoch study motivated raising the neural cap to 80 for all areas and seeds. This revision used stopping histories, not an optimization of test RMSE, but occurred after the original December 16-22 results were available. The revised results are a post-audit reevaluation on the same week, not a fresh untouched holdout. The small CNN validation improvement does not establish superiority.",
       "scaler": {
         "mean": 1314.1242884168532,
         "std": 1119.285422923653,
@@ -167,7 +167,7 @@
         "epochs": 80,
         "patience": 4
       },
-      "rationale": "Full-day history improved all three validation RMSEs over six-hour history. Raising RidgeAR alpha from 1 to 10 improved RMSE from 153.13 to 152.39. Doubling LSTM width worsened RMSE from 160.26 to 162.04, so retain 16 units. Doubling CNN width improved RMSE slightly from 160.28 to 160.09, so select 16 filters. Round four then fixed the epoch cap: on area 5161 both neural models stop on their own well inside 20 epochs, so raising the cap to 80 leaves that area's validation RMSE unchanged (160.26 and 160.09), but it stops the cap from truncating the other areas, where 22 of 30 fits had been ending at the cap rather than at the patience rule. Each model uses its minimum-validation-RMSE configuration, and all settings were frozen before any test data was scored. The small CNN validation gain should not be read as an established difference.",
+      "rationale": "Rounds 1-3 selected per-model settings using area 5161, seed 42 validation RMSE: full-day history for all models, Ridge alpha 10, LSTM width 16 and CNN width 16. A subsequent audit of the already evaluated 20-epoch study motivated raising the neural cap to 80 for all areas and seeds. This revision used stopping histories, not an optimization of test RMSE, but occurred after the original December 16-22 results were available. The revised results are a post-audit reevaluation on the same week, not a fresh untouched holdout. The small CNN validation improvement does not establish superiority.",
       "scaler": {
         "mean": 1314.1242884168532,
         "std": 1119.285422923653,

@@ -17,13 +17,29 @@ import pandas as pd
 from evaluation import milan_midnight_ms
 
 NAMES = ['square', 'timestamp', 'country', 'sms_in', 'sms_out', 'call_in', 'call_out', 'internet']
-DTYPES = {'square': 'int32', 'timestamp': 'int64', 'internet': 'float64'}
+DTYPES = {'square': 'string', 'timestamp': 'int64', 'internet': 'float64'}
 STEP = 600_000
 
 
 def read_projected(path, **kwargs):
-    return pd.read_csv(path, sep='\t', header=None, names=NAMES,
-                       usecols=['square', 'timestamp', 'internet'], dtype=DTYPES, **kwargs)
+    """Validate square IDs before narrowing; preserve bounded chunk iteration."""
+    def validate(frame):
+        squares = pd.to_numeric(frame['square'], errors='raise')
+        if (squares.isna() | ~squares.between(1, 10000) | (squares % 1 != 0)).any():
+            raise ValueError('Square ID must be an integer in 1..10000')
+        frame['square'] = squares.astype('int32')
+        return frame
+
+    result = pd.read_csv(path, sep='\t', header=None, names=NAMES,
+                         usecols=['square', 'timestamp', 'internet'], dtype=DTYPES, **kwargs)
+    if isinstance(result, pd.DataFrame):
+        return validate(result)
+
+    def chunks():
+        with result:
+            for frame in result:
+                yield validate(frame)
+    return chunks()
 
 
 def aggregate_chunk(chunk, sums, counts, start_ms):

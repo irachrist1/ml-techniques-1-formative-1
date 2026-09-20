@@ -21,7 +21,7 @@ A reproducible comparison of RidgeAR, LSTM and a causal dilated CNN for rolling 
 
 ## Results at a glance
 
-Seed 42 is the predetermined reference run; seeds 43 and 44 test optimization sensitivity. These are activity-unit errors, not GB or bandwidth measurements.
+Seed 42 is the reference run; seeds 43 and 44 test optimization sensitivity. These are activity-unit errors, not GB or bandwidth measurements.
 
 {rows}
 
@@ -50,7 +50,7 @@ python verify_submission.py
 python predict_saved.py --run results/runs/final_{config['id']}_area{eda['top3'][0]}_seed42 --model RidgeAR --timestamp '2013-12-16T12:00:00+01:00'
 ```
 
-The replay command loads saved parameters and uses only observations preceding the target. It refuses incomplete histories. The verification script reloads every final model and checks one interior forecast, recomputes metrics, checks split dates, verifies data fingerprints and enforces identical scored timestamps across models.
+The replay command loads saved parameters and uses only observations preceding the target. It refuses incomplete histories. The verification script reloads every final model and checks the first, middle and last test forecasts, recomputes metrics, checks split dates, verifies data fingerprints, training scalers, stopping metadata and exact eligible validation/test timestamps.
 
 ## Reproduce from original data
 
@@ -72,9 +72,9 @@ The downloader resumes partial transfers, checks MD5 before processing and refus
 
 ## Reproduce training
 
-`configs/initial.json`, `configs/daily_history.json`, `configs/capacity.json` and `configs/budget.json` record the four validation rounds in order, each carrying the reasoning for the change in its `rationale` field. `configs/final.json` freezes the per-model settings before any test data is scored. `results/tuning_log.csv` consolidates the observed validation results.
+`configs/initial.json`, `configs/daily_history.json`, `configs/capacity.json` and `configs/budget.json` record the four validation rounds in order, each carrying the reasoning for the change in its `rationale` field. `configs/final.json` records the revised settings. The epoch-budget revision followed an audit after the original test results were available; this is a reevaluation on the same week, not a fresh untouched holdout. `results/tuning_log.csv` consolidates the observed validation results.
 
-Round four exists because an audit of `epochs_run` against the epoch cap showed the cap, not the patience rule, was ending most neural fits. It did not bind on the tuning area, which is why the first three rounds missed it. `results/study_summary.json` records the post-fix count under `epoch_budget_audit`.
+The chronology is retained in `results/revision_provenance.json`. Round four exists because an audit of `epochs_run` against the epoch cap showed the cap, not the patience rule, was ending most neural fits. It did not bind on the tuning area at seed 42; CNN seeds 43 and 44 on that area did reach the old cap. `results/study_summary.json` records the post-fix count under `epoch_budget_audit`.
 
 The delivered `results/runs/` contains completed runs. To retrain without overwriting those records, first move that directory to a separate backup location. Then run:
 
@@ -129,6 +129,8 @@ This replaces the Word file, so preserve any Word-only edits first. Figures are 
 ## Scope and limitations
 
 This is a single-week, single-horizon empirical study. Area selection uses full-period totals because the assignment requests it; this is a selection dependence and limits prospective generalization claims. Models use only the selected area's history. Shared tuning does not optimize every area separately. Missing-window exclusion can bias the evaluation toward fully observed periods. Seed variation is not a confidence interval over future weeks. Validation and test disagree about the best model on several areas, so the per-area rankings should be read as one week's outcome rather than a general result; `results/validation_vs_test_ranking.csv` has the comparison. Local training and inference measurements include system noise and are not production service benchmarks.
+
+Substantial AI assistance supported implementation, analysis, review and report drafting; the report contains the disclosure. The individual video remains to be recorded.
 
 Dataset attribution and ODbL obligations: `DATA_LICENSE.md`. Research basis and differences from prior studies: `RESEARCH_NOTES.md`. Artificial values occur only in unit-test fixtures, never in reported assignment results.
 '''
