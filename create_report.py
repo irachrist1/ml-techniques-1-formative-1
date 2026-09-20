@@ -5,8 +5,16 @@ from pathlib import Path
 
 import pandas as pd
 
+from protocol import MODELS, REFERENCE_SEED
+
 ROOT = Path(__file__).resolve().parent
 R = ROOT / 'results'
+
+#: The only figure in the report that no committed artifact reproduces. It is a
+#: one-off read of the November 1 file with square-ID validation removed, made
+#: while deciding whether to keep that check. It is not re-measured here because
+#: re-running the benchmark would move the published numbers in Table 1.
+UNVALIDATED_READ_SECONDS = 1.8
 
 
 def table(headers, rows):
@@ -31,7 +39,38 @@ def build_report(video_url=None):
     validation = pd.read_csv(R / 'validation_metrics_all_seeds.csv')
     peak = pd.read_csv(R / 'peak_bias_summary.csv')
     config = json.loads((ROOT / 'configs/final.json').read_text())
-    repo = 'https://github.com/irachrist1/ml-techniques-1-formative-1'
+    audits = pd.read_csv(R / 'daily_audits.csv')
+    adf_specs = json.loads((R / 'adf_specifications.json').read_text())
+    old_memory = json.loads((R / 'memory_benchmark.json').read_text())
+    baselines = pd.read_csv(R / 'baseline_metrics.csv')
+    top_area = eda['top3'][0]
+    top_winner = study['winners'][0]
+    # Accumulators are a fixed (144 x 10000) float64 sum plus a uint32 count, so
+    # their size does not grow with how much of the file has been read.
+    accumulator_mb = float(audits.accumulator_bytes.iloc[0]) / 1e6
+    narrow_adf = next(s for s in adf_specs['specifications'] if not s['spans_a_full_daily_cycle'])
+    wide_adf = next(s for s in adf_specs['specifications'] if s['spans_a_full_daily_cycle'])
+
+    def tuned(experiment, model):
+        row = tuning[(tuning.experiment == experiment) & (tuning.model == model)]
+        return float(row.val_rmse.iloc[0])
+
+    cnn_round2, cnn_round3 = tuned('daily_history', 'CausalCNN'), tuned('capacity', 'CausalCNN')
+    ridge_validation = float(validation[(validation.area == top_area)
+                                        & (validation.model == 'RidgeAR')
+                                        & (validation.seed == REFERENCE_SEED)].rmse.iloc[0])
+
+    # How many reference-seed learned fits actually beat persistence, and which one
+    # comes off worst relative to it. Counted rather than asserted in prose.
+    persistence = baselines[baselines.model == 'Persistence'].set_index('area').rmse
+    learned = metrics[metrics.model.isin(MODELS)].copy()
+    learned['ratio'] = learned.rmse / learned.area.map(persistence)
+    total_fits = int(len(learned))
+    beat_persistence = int((learned.ratio < 1).sum())
+    worst = learned.loc[learned.ratio.idxmax()]
+    worst_area, worst_model = int(worst.area), worst.model
+    worst_rmse, worst_persistence = float(worst.rmse), float(persistence[worst_area])
+    repo = json.loads((ROOT / 'output/repository.json').read_text())['url']
     pages = []
     video = f'[{video_url}]({video_url})' if video_url else 'Recording and accessible link pending; no video is included in this version.'
     pages.append(f'''# One-step mobile-network traffic forecasting in Milan
@@ -56,7 +95,7 @@ LSTM tests whether gated nonlinear processing of a day's observations improves o
 
 Bai et al. [3] motivate causal dilated convolutions as an alternative to recurrence. CausalCNN combines nonlinear local features across the input window, but omits their residual blocks and weight normalization. Its finite receptive field and padding are explicit below; published benchmark rankings are not assumed to transfer. Zhang and Patras [4] use spatial information and longer horizons, motivating extensions rather than a directly comparable accuracy target.
 
-The reference-seed result on area 5161 favors CausalCNN (RMSE 118.16 versus persistence 134.88). Area and seed comparisons below qualify that result.''')
+The reference-seed result on area {top_area} favors {top_winner['best_learned']} (RMSE {top_winner['best_learned_rmse']:.2f} versus persistence {top_winner['persistence_rmse']:.2f}). Area and seed comparisons below qualify that result.''')
 
     b, c = memory['runs']
     memrows = [[r['mode'], f"{r['peak_rss_bytes']/1e6:.1f}",
@@ -69,13 +108,13 @@ The 61 daily files contain {eda['raw_rows']:,} rows and {eda['raw_bytes']/1e9:.2
 
 Country-code Internet values are summed within each square and interval. Empty fields are excluded, observed zeros are retained, and a bin is missing when it has no observed Internet values. There are {eda['missing_square_time_bins']:,} missing bins among 87,840,000. One thing I cannot check from this data: a bin can have some country rows and be missing others, and there is no way to tell that apart from full coverage.
 
-Projected, chunked input and fixed daily sum/count arrays (17.28 MB) avoid retaining the full collection in RAM. Arrays are not the whole process footprint: parser objects, validation and transient allocations also contribute. Raw files remain on disk, trading storage and I/O for bounded processing memory.
+Projected, chunked input and fixed daily sum/count arrays ({accumulator_mb:.2f} MB) avoid retaining the full collection in RAM. Arrays are not the whole process footprint: parser objects, validation and transient allocations also contribute. Raw files remain on disk, trading storage and I/O for bounded processing memory.
 
 **Table 1. Repeated November 1 benchmark; decimal MB, medians over {memory['repeats_per_method']} isolated processes per method.**
 
 {table(['Method', 'Peak RSS', 'RSS range', 'Wall seconds', 'Largest frame'], memrows)}
 
-The median peak reduction is {memory['peak_rss_reduction_percent']:.1f}%. Every pair matches missing masks and observation counts; maximum aggregate difference is {memory['max_abs_aggregation_difference']:.2g}. Order alternates, but cache and background load are uncontrolled. Chunked processing is the slower of the two here, and most of that gap is the per-chunk square-ID validation rather than the chunking itself: reading the same file with the IDs narrowed straight to int32 runs in about 1.8 s against 3.7 s with validation, so before that check was added the chunked path was marginally faster than the full-day load. I keep the check because narrowing first lets an out-of-range ID wrap into a valid one. Wall time leaves out imports, checksums and writing the output; peak memory includes imports and everything up to that point. An earlier single run of this benchmark reported 86.4%. It did not reproduce, so I keep it in `memory_benchmark.json` for the record but I do not rely on it.
+The median peak reduction is {memory['peak_rss_reduction_percent']:.1f}%. Every pair matches missing masks and observation counts; maximum aggregate difference is {memory['max_abs_aggregation_difference']:.2g}. Order alternates, but cache and background load are uncontrolled. Chunked processing is the slower of the two here, and most of that gap is the per-chunk square-ID validation rather than the chunking itself: reading the same file with the IDs narrowed straight to int32 runs in about {UNVALIDATED_READ_SECONDS} s against {memory['runs'][1]['wall_seconds']:.2f} s with validation, so before that check was added the chunked path was marginally faster than the full-day load. I keep the check because narrowing first lets an out-of-range ID wrap into a valid one. Wall time leaves out imports, checksums and writing the output; peak memory includes imports and everything up to that point. An earlier single run of this benchmark reported {old_memory['peak_rss_reduction_percent']:.1f}%. It did not reproduce, so I keep it in `memory_benchmark.json` for the record but I do not rely on it.
 
 {figure(1, 'Total observed activity across 10,000 areas over November-December.', 'traffic_distribution.png')}
 
@@ -103,7 +142,7 @@ The two additional analyses are temporal dependence and weekday/weekend profiles
 
 CV is sample standard deviation divided by mean. Area 5161 averages 1847 on weekends and 1357 on weekdays, whereas the weekend/weekday ratio is 0.42 in area 5259. These profiles support separate area-level evaluation. A repeated daily shape need not make yesterday's level a good ten-minute forecast.
 
-On {adf['segment_n']:,} complete training values, ADF gives statistic {adf['statistic']:.3f}, p={adf['pvalue']:.3g}. The regression includes a constant; AIC selects {adf['lags']} lags from a maximum of {adf['max_lag_allowed']}. Expanding the previous 30-lag search changed p from 1.35e-27 to 9.57e-04, demonstrating specification sensitivity. The expanded candidate set permits daily-lag dependence; it is not a universal rule that ADF must include a full seasonal cycle. Both specifications reject the unit-root null under their assumptions. Neither proves strict stationarity or removes seasonal structure; residual diagnostics and further specification checks remain limitations. First-differenced p={eda['difference_adf']['pvalue']:.2g} does not by itself justify differencing the forecasting target.
+On {adf['segment_n']:,} complete training values, ADF gives statistic {adf['statistic']:.3f}, p={adf['pvalue']:.3g}. The regression includes a constant; AIC selects {adf['lags']} lags from a maximum of {adf['max_lag_allowed']}. Expanding the previous {narrow_adf['max_lag_allowed']}-lag search changed p from {narrow_adf['pvalue']:.2e} to {wide_adf['pvalue']:.2e}, demonstrating specification sensitivity. The expanded candidate set permits daily-lag dependence; it is not a universal rule that ADF must include a full seasonal cycle. Both specifications reject the unit-root null under their assumptions. Neither proves strict stationarity or removes seasonal structure; residual diagnostics and further specification checks remain limitations. First-differenced p={eda['difference_adf']['pvalue']:.2g} does not by itself justify differencing the forecasting target.
 
 {figure(4, 'Robust STL on training dates, period 144. The daily seasonal component, changing trend and residual spikes describe different sources of variation.', 'stl_training.png')}
 
@@ -142,7 +181,7 @@ The correction target does not force zero changes: minimizing squared error in d
 
 {table(['Experiment','Model','Val RMSE','Epochs','Train seconds'], tune_rows)}
 
-Round 2 improved all models by extending six-hour history to a day. CNN dilation depth also changed, so its improvement cannot be attributed to history alone. Round 3 retained Ridge alpha 10 and LSTM width 16; CNN width 16 reduced RMSE from 160.28 to 160.09. That is a 0.12% difference. It decided the choice only because I had committed in advance to taking the lowest validation RMSE; it is far too small to claim the wider CNN is genuinely better. Each candidate used one tuning seed.
+Round 2 improved all models by extending six-hour history to a day. CNN dilation depth also changed, so its improvement cannot be attributed to history alone. Round 3 retained Ridge alpha 10 and LSTM width 16; CNN width 16 reduced RMSE from {cnn_round2:.2f} to {cnn_round3:.2f}. That is a {100 * (1 - cnn_round3 / cnn_round2):.2f}% difference. It decided the choice only because I had committed in advance to taking the lowest validation RMSE; it is far too small to claim the wider CNN is genuinely better. Each candidate used one tuning seed.
 
 The original 20-epoch study had already produced test results when a stopping-history audit motivated round 4. Of 30 neural fits, 22 ran 20 epochs; one also triggered patience there, leaving 21 cap-only terminations. Ten had minimum recorded validation loss at the final epoch. The cap did not bind for area 5161 seed 42, but did for its CNN seeds 43 and 44. Increasing it uniformly to 80 is a budget-sensitivity revision, not evidence that finite budgets are inherently incorrect.
 
@@ -168,7 +207,7 @@ Validation below training loss can reflect different traffic regimes and trainin
         pages.append('\n\n'.join([f'## Forecasts for area {area}',
             'Observed and predicted activity use identical timestamps, reference seed 42 and already observed history.'] +
             [figure(f'{fig_number}{letter}', f'{kind}, area {area}: December 16-22 rolling one-step forecasts.', f'forecast_{area}_{kind}.png')
-             for letter, kind in zip('abc', ['RidgeAR','LSTM','CausalCNN'])]))
+             for letter, kind in zip('abc', MODELS, strict=True)]))
 
     rankrows = [[r.area,r.validation_best,r.test_best] for r in ranking.itertuples()]
     seedrows = []
@@ -180,13 +219,13 @@ Validation below training loss can reflect different traffic regimes and trainin
     pk = peak[peak.area == 5161].set_index('model')
     pages.append(f'''## 8. Comparative discussion
 
-Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; that is a small loss on this particular week, not a difference I have shown to be real. Daily-seasonal persistence is worse in all five areas. I read this as confirming that the immediate previous value is the thing to beat at a ten-minute horizon, not as evidence that seasonal information is useless: a model given the daily shape *alongside* recent history could still use it, and I have not tested that.
+{beat_persistence} of {total_fits} reference-seed learned fits have lower RMSE than persistence. Area {worst_area} {worst_model} is slightly worse: {worst_rmse:.2f} versus {worst_persistence:.2f}, about {100 * (worst_rmse / worst_persistence - 1):.2f}%; that is a small loss on this particular week, not a difference I have shown to be real. Daily-seasonal persistence is worse in all five areas. I read this as confirming that the immediate previous value is the thing to beat at a ten-minute horizon, not as evidence that seasonal information is useless: a model given the daily shape *alongside* recent history could still use it, and I have not tested that.
 
 **Table 10. Validation/test winners at seed 42 only.**
 
 {table(['Area','Validation best','Test best'], rankrows)}
 
-The number of ranking disagreements is {disagreements.loc[42]}/5 for seed 42, {disagreements.loc[43]}/5 for seed 43 and {disagreements.loc[44]}/5 for seed 44. On area 5161, CNN validation RMSE is {', '.join(f'{x:.2f}' for x in v.rmse)}, while Ridge remains 152.39. Thus optimization variation changes the validation winner; the reference-seed reversal cannot be attributed solely to a difference between weeks. Three seeds do not measure uncertainty across future weeks.
+The number of ranking disagreements is {disagreements.loc[42]}/5 for seed 42, {disagreements.loc[43]}/5 for seed 43 and {disagreements.loc[44]}/5 for seed 44. On area 5161, CNN validation RMSE is {', '.join(f'{x:.2f}' for x in v.rmse)}, while Ridge remains {ridge_validation:.2f}. Thus optimization variation changes the validation winner; the reference-seed reversal cannot be attributed solely to a difference between weeks. Three seeds do not measure uncertainty across future weeks.
 
 **Table 11. Evaluation RMSE mean (sample SD), three seeds.**
 
@@ -208,7 +247,7 @@ Across areas, 14/15 high-decile biases are negative and 13/15 low-decile biases 
 
 {figure(9, "The biggest single error at seed 42, scaled by each area's training standard deviation so areas of different size compare fairly. I picked this case after the models were finished.", 'failure_case.png')}
 
-The selected miss is area {failure['area']} at {stamp}. {failure['model']} predicts {failure['prediction']:.2f} against {failure['actual']:.2f}, an absolute error of {failure['abs_error']:.2f}, or {failure['severity_train_std']:.2f} training SDs. Activity rises from 414.87 to 717.77 and then falls to 348.86. All three models miss the rise and overshoot the fall. {nexttext}
+The selected miss is area {failure['area']} at {stamp}. {failure['model']} predicts {failure['prediction']:.2f} against {failure['actual']:.2f}, an absolute error of {failure['abs_error']:.2f}, or {failure['severity_train_std']:.2f} training SDs. Activity rises from {failure['previous_actual']:.2f} to {failure['actual']:.2f} and then falls to {failure['next_step']['actual']:.2f}. All three models miss the rise and overshoot the fall. {nexttext}
 
 The spike enters the next window and persistence anchor, which is consistent with the observed lagging response. A model could in principle learn to cancel that, so I would not claim this is a hard limit of the architecture or that more tuning could not help. This is also the single worst error I could find, so it is deliberately not a typical case. I have no evidence of what caused the spike, and with one interval involved I cannot rule out a measurement glitch.
 
@@ -216,7 +255,7 @@ A defensible next experiment would compare direct-target and correction-target m
 
 ## 9. Conclusion and future work
 
-The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR stays competitive at a fraction of the training cost. Rankings move with area, seed and week, so I am not willing to name a best architecture on this evidence. What I would defend is narrower: at this horizon a 145-parameter linear model is a serious competitor, and the burden is on the more expensive models to show a gain that survives more than one week.
+The busiest area's reference CNN improves RMSE from persistence's {top_winner['persistence_rmse']:.2f} to {top_winner['best_learned_rmse']:.2f}. RidgeAR stays competitive at a fraction of the training cost. Rankings move with area, seed and week, so I am not willing to name a best architecture on this evidence. What I would defend is narrower: at this horizon a {study['parameters_by_model']['RidgeAR']}-parameter linear model is a serious competitor, and the burden is on the more expensive models to show a gain that survives more than one week.
 
 The main limits are these. I have one evaluation week, and I reused it after revising the epoch budget. The areas were chosen using totals that include that week. Hyperparameters were tuned mostly on one area and one seed. Some aggregation bins are only partly covered. And the training budgets are not matched across models. What I would do next is choose the areas from an earlier period, evaluate across several weeks with a rolling origin, give each model the same compute, and test whether predicting the value directly beats predicting a correction. The daily and weekly correlation suggests calendar features might help, but that needs testing rather than assuming.''')
 
