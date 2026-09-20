@@ -15,13 +15,28 @@ import numpy as np
 import pandas as pd
 
 from evaluation import milan_midnight_ms
+from protocol import STEP_MS as STEP
 
 NAMES = ['square', 'timestamp', 'country', 'sms_in', 'sms_out', 'call_in', 'call_out', 'internet']
 DTYPES = {'square': 'string', 'timestamp': 'int64', 'internet': 'float64'}
-STEP = 600_000
+SQUARES = 10000
+READ_BLOCK = 1024 * 1024
 
 
-def read_projected(path, **kwargs):
+def file_md5(path: Path) -> str:
+    """Checksum a file in bounded blocks, so a 20 GB input never has to be resident.
+
+    This verifies transfer integrity against the publisher's manifest. It says
+    nothing about whether the measurements themselves are accurate.
+    """
+    digest = hashlib.md5()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(READ_BLOCK), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def read_projected(path: Path, **kwargs):
     """Validate square IDs before narrowing; preserve bounded chunk iteration."""
     def validate(frame):
         squares = pd.to_numeric(frame['square'], errors='raise')
@@ -42,7 +57,7 @@ def read_projected(path, **kwargs):
     return chunks()
 
 
-def aggregate_chunk(chunk, sums, counts, start_ms):
+def aggregate_chunk(chunk: pd.DataFrame, sums: np.ndarray, counts: np.ndarray, start_ms: int) -> None:
     """Add bounded input to accumulators, validating before any mutation."""
     offsets = chunk.timestamp.to_numpy() - start_ms
     squares = chunk.square.to_numpy()
@@ -60,15 +75,13 @@ def aggregate_chunk(chunk, sums, counts, start_ms):
     np.add.at(counts, (slots, ids), 1)
 
 
-def prepare(path, date, output, expected_md5, chunksize=100_000):
+def prepare(path: Path, date: str, output: Path, expected_md5: str,
+            chunksize: int = 100_000) -> dict:
     if chunksize < 1:
         raise ValueError('chunksize must be positive')
     started = time.perf_counter()
-    digest = hashlib.md5()
-    with path.open('rb') as stream:
-        for block in iter(lambda: stream.read(1024*1024), b''):
-            digest.update(block)
-    if digest.hexdigest() != expected_md5:
+    digest = file_md5(path)
+    if digest != expected_md5:
         raise ValueError('Publisher checksum does not match; do not process this file')
 
     start = milan_midnight_ms(date)
@@ -83,7 +96,8 @@ def prepare(path, date, output, expected_md5, chunksize=100_000):
     sample_rows = len(baseline)
     before = int(baseline.memory_usage(deep=True).sum())
     after = int(optimized.memory_usage(deep=True).sum())
-    pd.testing.assert_frame_equal(baseline[['square','timestamp','internet']], optimized, check_dtype=False)
+    pd.testing.assert_frame_equal(baseline[['square', 'timestamp', 'internet']], optimized,
+                                  check_dtype=False)
     del baseline, optimized
 
     rows = missing_fields = chunks = 0
@@ -103,7 +117,7 @@ def prepare(path, date, output, expected_md5, chunksize=100_000):
     report = {
         'date': date, 'scope': 'Daily aggregation audit',
         'input_name': path.name, 'input_bytes': path.stat().st_size,
-        'md5': digest.hexdigest(), 'raw_rows': rows, 'chunks': chunks,
+        'md5': digest, 'raw_rows': rows, 'chunks': chunks,
         'timezone': 'Europe/Rome', 'intervals': intervals, 'squares': 10000,
         'missing_internet_fields': missing_fields,
         'missing_square_time_bins': int(missing_bins.sum()),
@@ -119,8 +133,11 @@ def prepare(path, date, output, expected_md5, chunksize=100_000):
         'wall_seconds_including_checksum_and_sample_benchmark': time.perf_counter()-started,
         'platform': platform.platform(), 'machine': platform.machine(),
         'python': platform.python_version(), 'numpy': np.__version__, 'pandas': pd.__version__,
-        'limitations': ['Checksums validate transfer integrity, not source measurement accuracy', 'An observed aggregate can have partial country-code coverage',
-                         'Process peak includes imports and both sample frames; not an isolated before/after RSS benchmark'],
+        'limitations': [
+            'Checksums validate transfer integrity, not source measurement accuracy',
+            'An observed aggregate can have partial country-code coverage',
+            'Process peak includes imports and both sample frames; not an isolated before/after RSS benchmark',
+        ],
     }
     (output / f'{date}-audit.json').write_text(json.dumps(report, indent=2)+'\n')
     return report

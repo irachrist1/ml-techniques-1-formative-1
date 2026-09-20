@@ -1,24 +1,30 @@
 """Repeated, isolated-process full-day memory comparison with recorded provenance."""
 import argparse
-from datetime import datetime, timezone
-import hashlib
 import json
-from pathlib import Path
 import platform
 import resource
 import subprocess
 import sys
 import time
+from datetime import UTC, datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
 from evaluation import milan_midnight_ms
-from prepare_day import NAMES, read_projected, aggregate_chunk
+from prepare_day import NAMES, aggregate_chunk, file_md5, read_projected
 
 ROOT = Path(__file__).resolve().parent
 
+# Recorded verbatim in the output so the numbers are never read without their caveats.
+SCOPE = ('Complete November 1 file; separate process per sample; alternating order; filesystem cache '
+         'and background load uncontrolled. Peak before output serialization; wall time excludes '
+         'imports, checksum and serialization. Parser transient allocations and sum/count arrays are '
+         'included in peak RSS.')
 
-def worker(mode, path, directory):
+
+def worker(mode: str, path: Path, directory: Path) -> None:
     start = time.perf_counter()
     sums = np.zeros((144, 10000))
     counts = np.zeros((144, 10000), dtype=np.uint32)
@@ -44,7 +50,7 @@ def worker(mode, path, directory):
                       'max_dataframe_bytes': dataframe_bytes}))
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--worker', choices=['baseline', 'chunked'])
     parser.add_argument('--repeats', type=int, default=3)
@@ -81,16 +87,12 @@ def main():
             row[key + '_min'] = min(values)
             row[key + '_max'] = max(values)
         runs.append(row)
-    digest = hashlib.md5()
-    with path.open('rb') as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b''):
-            digest.update(block)
     report = {
-        'recorded_utc': datetime.now(timezone.utc).isoformat(), 'input': path.name,
-        'input_bytes': path.stat().st_size, 'input_md5': digest.hexdigest(),
+        'recorded_utc': datetime.now(UTC).isoformat(), 'input': path.name,
+        'input_bytes': path.stat().st_size, 'input_md5': file_md5(path),
         'platform': platform.platform(), 'machine': platform.machine(), 'python': platform.python_version(),
         'numpy': np.__version__, 'pandas': pd.__version__, 'repeats_per_method': args.repeats,
-        'scope': 'Complete November 1 file; separate process per sample; alternating order; filesystem cache and background load uncontrolled. Peak before output serialization; wall time excludes imports, checksum and serialization. Parser transient allocations and sum/count arrays are included in peak RSS.',
+        'scope': SCOPE,
         'runs': runs, 'samples': samples,
         'peak_rss_reduction_percent': 100 * (1 - runs[1]['peak_rss_bytes'] / runs[0]['peak_rss_bytes']),
         'same_missing_mask': True, 'same_observation_counts': True,

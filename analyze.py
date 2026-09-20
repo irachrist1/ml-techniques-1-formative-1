@@ -2,14 +2,14 @@
 import json
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import STL
+from statsmodels.tsa.stattools import adfuller
 
 from evaluation import milan_midnight_ms
 
@@ -24,7 +24,7 @@ plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10, 'axes.spines
                      'axes.spines.right': False, 'figure.dpi': 150})
 
 
-def longest_run(values):
+def longest_run(values: np.ndarray) -> np.ndarray:
     valid = np.isfinite(values)
     edges = np.diff(np.r_[False, valid, False].astype(int))
     starts = np.where(edges == 1)[0]
@@ -35,12 +35,12 @@ def longest_run(values):
     return values[starts[i]:ends[i]]
 
 
-def save(fig, name):
+def save(fig, name: str) -> None:
     fig.savefig(FIGURES / name, bbox_inches='tight')
     plt.close(fig)
 
 
-def load_days():
+def load_days() -> tuple[np.ndarray, np.ndarray, list[dict]]:
     """Accumulate full-period totals and observation counts one day at a time."""
     totals = np.zeros(10000)
     observed = np.zeros(10000, dtype=int)
@@ -60,7 +60,7 @@ def load_days():
     return totals, observed, audits
 
 
-def coverage_robustness(rank, top_n=3):
+def coverage_robustness(rank: pd.DataFrame, top_n: int = 3) -> dict:
     """Sensitivity to imputing each area's observed mean into its missing bins.
 
     This is an assumption-based scenario, not an upper bound: unobserved
@@ -83,7 +83,7 @@ def coverage_robustness(rank, top_n=3):
     }
 
 
-def weekly_profile(series, local_index):
+def weekly_profile(series: pd.Series, local_index) -> tuple[float, float]:
     """Mean weekday and weekend level, for comparing areas on evidence."""
     weekend = local_index.dayofweek >= 5
     values = series.to_numpy()
@@ -92,7 +92,7 @@ def weekly_profile(series, local_index):
     return weekday_mean, weekend_mean
 
 
-def main():
+def main() -> None:
     RESULTS.mkdir(exist_ok=True)
     FIGURES.mkdir(exist_ok=True)
     totals, observed, audits = load_days()
@@ -167,7 +167,7 @@ def main():
         'coverage_median': float(rank.coverage.median()),
         'coverage_robustness': coverage_robustness(rank),
         'training_end_exclusive': '2013-12-09 Europe/Rome',
-        'top_area_acf': dict(zip(map(str, lags), map(lambda i: float(acf[i]), lags))),
+        'top_area_acf': {str(lag): float(acf[lag]) for lag in lags},
         'acf_white_noise_band_95': acf_band,
         'adf': {'segment_n': len(segment), 'statistic': float(adf[0]), 'pvalue': float(adf[1]),
                 'lags': int(adf[2]), 'max_lag_allowed': ADF_MAX_LAG, 'critical_values': adf[4]},
@@ -186,7 +186,7 @@ def main():
     save(fig, 'traffic_distribution.png')
 
     fig, axs = plt.subplots(len(areas), 1, figsize=(10, 10), sharex=True)
-    for ax, area in zip(axs, areas):
+    for ax, area in zip(axs, areas, strict=True):
         ax.plot(local[:2016], frame[str(area)].iloc[:2016], lw=.7, color='#14645a')
         ax.set_ylabel(f'Area {area}\nActivity')
         ax.grid(alpha=.15)
@@ -215,8 +215,9 @@ def main():
     save(fig, 'temporal_analysis.png')
 
     fig, axs = plt.subplots(4, 1, figsize=(9, 7), sharex=True)
-    for ax, data, label in zip(axs, [filled, decomposition.trend, decomposition.seasonal, decomposition.resid],
-                               ['Observed', 'Trend', 'Daily seasonal', 'Residual']):
+    panels = [filled, decomposition.trend, decomposition.seasonal, decomposition.resid]
+    for ax, data, label in zip(axs, panels, ['Observed', 'Trend', 'Daily seasonal', 'Residual'],
+                               strict=True):
         ax.plot(local_train, data, lw=.6, color='#14645a')
         ax.set_ylabel(label)
     axs[0].set_title(f'Area {top3[0]}: robust STL, period = 144 intervals (training only)')
