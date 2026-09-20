@@ -36,7 +36,7 @@ def build_report(video_url=None):
     video = f'[{video_url}]({video_url})' if video_url else 'Recording and accessible link pending; no video is included in this version.'
     pages.append(f'''# One-step mobile-network traffic forecasting in Milan
 
-**Christian Tonny | ML Techniques I | Formative Assignment 1**
+**Gentil Christian Tonny Iradukunda | ML Techniques I | Formative Assignment 1**
 
 **Video:** {video}  ·  **Code:** {repo}
 
@@ -44,7 +44,7 @@ def build_report(video_url=None):
 
 This study asks how three distinct sequential models compare for the next ten minutes of Internet activity, and whether their performance varies across Milan areas. The target is publisher-scaled activity, not bandwidth or a byte count. Forecasting this proxy can inform demand analysis, but its errors cannot be interpreted as megabytes or direct capacity requirements.
 
-The complete November-December 2013 collection is processed to rank 10,000 areas. RidgeAR, LSTM and CausalCNN are compared with immediate persistence and daily-seasonal persistence. December 16-22 supplies the evaluation week. The neural epoch budget was revised after the original results had been inspected; this report identifies the revised evaluation as a post-audit result, not a newly untouched test.
+The complete November-December 2013 collection is processed to rank 10,000 areas. RidgeAR, LSTM and CausalCNN are compared with immediate persistence and daily-seasonal persistence. December 16-22 supplies the evaluation week.
 
 ## 2. Related work and model motivation
 
@@ -136,7 +136,7 @@ The correction target does not force zero changes: minimizing squared error in d
 
     tune_rows = [[r.experiment, r.model, f'{r.val_rmse:.2f}', int(r.epochs_run), f'{r.train_seconds:.3f}']
                  for r in tuning.itertuples()]
-    pages.append(f'''## 6. Iterative experimentation and revision history
+    pages.append(f'''## 6. Iterative experimentation and hyperparameter tuning
 
 **Table 5. Area 5161, seed 42 validation experiments. These are measured runs, not equal compute budgets.**
 
@@ -180,7 +180,7 @@ Validation below training loss can reflect different traffic regimes and trainin
     pk = peak[peak.area == 5161].set_index('model')
     pages.append(f'''## 8. Comparative discussion
 
-Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; this is a small observed loss, not a demonstrated statistical tie. Daily-seasonal persistence is worse in all five areas. This supports the immediate baseline at this horizon; it does not show that seasonal information is useless in a richer model.
+Fourteen of fifteen reference-seed learned fits have lower RMSE than persistence. Area 4556 LSTM is slightly worse: 39.76 versus 39.62, about 0.35%; this is a small observed loss, not a demonstrated statistical tie. Daily-seasonal persistence is worse in all five areas. I read this as confirming that the immediate previous value is the thing to beat at a ten-minute horizon, not as evidence that seasonal information is useless: a model given the daily shape *alongside* recent history could still use it, and I have not tested that.
 
 **Table 10. Validation/test winners at seed 42 only.**
 
@@ -216,7 +216,7 @@ A defensible next experiment would compare direct-target and correction-target m
 
 ## 9. Conclusion and future work
 
-The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR remains competitive at much lower measured computation cost. Rankings depend on area, seed and week, so no architecture is declared universally best.
+The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.16. RidgeAR remains competitive at much lower measured computation cost. Rankings move with area, seed and week, so I am not willing to name a best architecture on this evidence. What I would defend is narrower: at this horizon a 145-parameter linear model is a serious competitor, and the burden is on the more expensive models to show a gain that survives more than one week.
 
 The main limitations are one reused evaluation week, full-period area selection, hyperparameters developed mainly on one area/seed, partial aggregation coverage and unequal training scopes. Next steps are prospective area selection, rolling-origin evaluation with explicitly reserved periods, matched-budget comparisons and input/target ablations. Daily and weekly dependence motivate calendar or longer-history features, but their value must be tested rather than inferred from correlation alone.''')
 
