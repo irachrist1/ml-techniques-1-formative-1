@@ -5,10 +5,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 
-def main():
+def main() -> None:
     eda = json.loads((ROOT / 'results/eda_summary.json').read_text())
     study = json.loads((ROOT / 'results/study_summary.json').read_text())
     config = json.loads((ROOT / 'configs/final.json').read_text())
+    repository = json.loads((ROOT / 'output/repository.json').read_text())
     area = eda['top3'][0]
     out = ROOT / 'output'
     out.mkdir(exist_ok=True)
@@ -100,13 +101,15 @@ The defensible claim, the limitation of one test week and five areas, and the ne
     checklist = f'''# Before submitting
 
 Verification state is recorded in `results/verification.json`.
+Repository: {repository['url']} (currently {repository['visibility']}).
+Video: {repository['video']}
 
-- [ ] Record the 7-10 minute individual video using `video_outline.md`.
-- [ ] Replace the pending-video statement in reference [7] of `output/report.md` with the accessible video URL, then rebuild the PDF with `python render_report.py`.
-- [ ] Confirm the GitHub repository is reachable by the grader. Check the public link from a logged-out session.
+- [x] Record the 7-10 minute individual video.
+- [x] Put the video URL in reference [7] of `output/report.md`.
+- [ ] Make the repository reachable by the grader, then open both links from a
+      logged-out browser session. A private repository is not reachable.
 - [ ] Open the rebuilt PDF and check every figure rendered and no placeholder text remains.
 - [ ] Submit the PDF through Canvas by September 20, 2026, 23:59 Kigali time.
-- [ ] Open the repository and video links from a logged-out browser session.
 '''
     (out / 'submission_checklist.md').write_text(checklist)
     print(out / 'video_outline.md')
