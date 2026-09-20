@@ -1,0 +1,10 @@
+{
+  "areas": 5,
+  "areas_where_ranges_overlap": 4,
+  "areas_where_gap_exceeds_combined_sd": 1,
+  "areas_where_reference_seed_disagrees_with_seed_mean": 1,
+  "largest_seed_sd_observed": 4.426740347869221,
+  "smallest_gap_rmse": 0.2711515560365285,
+  "interpretation": "Where the top two models' seed ranges overlap, that area's ranking is not separated by this evidence and should be read as one week at one seed, not as a general ordering.",
+  "caveat": "Three seeds measure optimization variability only, not forecast uncertainty."
+}
