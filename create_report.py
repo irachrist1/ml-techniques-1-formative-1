@@ -33,9 +33,12 @@ def build_report(video_url=None):
     config = json.loads((ROOT / 'configs/final.json').read_text())
     repo = 'https://github.com/irachrist1/ml-techniques-1-formative-1'
     pages = []
+    video = f'[{video_url}]({video_url})' if video_url else 'Recording and accessible link pending; no video is included in this version.'
     pages.append(f'''# One-step mobile-network traffic forecasting in Milan
 
 **Christian Tonny | ML Techniques I | Formative Assignment 1**
+
+**Video:** {video}  ·  **Code:** {repo}
 
 ## 1. Introduction
 
@@ -217,10 +220,13 @@ The busiest area's reference CNN improves RMSE from persistence's 134.88 to 118.
 
 The main limitations are one reused evaluation week, full-period area selection, hyperparameters developed mainly on one area/seed, partial aggregation coverage and unequal training scopes. Next steps are prospective area selection, rolling-origin evaluation with explicitly reserved periods, matched-budget comparisons and input/target ablations. Daily and weekly dependence motivate calendar or longer-history features, but their value must be tested rather than inferred from correlation alone.''')
 
-    video = f'[Individual presentation]({video_url})' if video_url else 'Recording and accessible link pending; no video is included in this version.'
     pages.append(f'''## AI assistance disclosure
 
-OpenAI Codex and other AI assistance contributed substantially to code, experimental design, model implementation, testing, analysis, figures and report drafting, including the subsequent audit and corrections. The numerical results derive from the published dataset; artificial values are used in tests only. This disclosure describes assistance and does not attest to independent student authorship or demonstrated understanding. The student remains responsible for reviewing and explaining the submitted work under the course policy.
+I used AI assistance substantially on this project, and I want to be specific about where: writing the code, designing the experiments, implementing the three models, writing the tests, running the analysis, producing the figures, and drafting this report. The later audit that caught the epoch-cap problem, the unreproducible memory figure and several wrong claims in my own text was AI-assisted as well.
+
+What that assistance did not do is invent results. Every number in this report is computed from the published Telecom Italia dataset by the code in the repository, and each one can be recomputed from the saved predictions. The only artificial values anywhere in the project are the small fixtures in the unit tests.
+
+I am responsible for what I am submitting under my name, including being able to explain and justify the data handling, the memory decisions, the model choices, the experiments and the conclusions drawn from them.
 
 ## References
 

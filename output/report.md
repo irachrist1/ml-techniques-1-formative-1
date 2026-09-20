@@ -2,6 +2,8 @@
 
 **Christian Tonny | ML Techniques I | Formative Assignment 1**
 
+**Video:** [https://youtu.be/BuK5q4nUBL0](https://youtu.be/BuK5q4nUBL0)  ·  **Code:** https://github.com/irachrist1/ml-techniques-1-formative-1
+
 ## 1. Introduction
 
 This study asks how three distinct sequential models compare for the next ten minutes of Internet activity, and whether their performance varies across Milan areas. The target is publisher-scaled activity, not bandwidth or a byte count. Forecasting this proxy can inform demand analysis, but its errors cannot be interpreted as megabytes or direct capacity requirements.
@@ -282,7 +284,11 @@ The main limitations are one reused evaluation week, full-period area selection,
 
 ## AI assistance disclosure
 
-OpenAI Codex and other AI assistance contributed substantially to code, experimental design, model implementation, testing, analysis, figures and report drafting, including the subsequent audit and corrections. The numerical results derive from the published dataset; artificial values are used in tests only. This disclosure describes assistance and does not attest to independent student authorship or demonstrated understanding. The student remains responsible for reviewing and explaining the submitted work under the course policy.
+I used AI assistance substantially on this project, and I want to be specific about where: writing the code, designing the experiments, implementing the three models, writing the tests, running the analysis, producing the figures, and drafting this report. The later audit that caught the epoch-cap problem, the unreproducible memory figure and several wrong claims in my own text was AI-assisted as well.
+
+What that assistance did not do is invent results. Every number in this report is computed from the published Telecom Italia dataset by the code in the repository, and each one can be recomputed from the saved predictions. The only artificial values anywhere in the project are the small fixtures in the unit tests.
+
+I am responsible for what I am submitting under my name, including being able to explain and justify the data handling, the memory decisions, the model choices, the experiments and the conclusions drawn from them.
 
 ## References
 
@@ -298,7 +304,7 @@ OpenAI Codex and other AI assistance contributed substantially to code, experime
 
 [6] C. Tonny, "ML Techniques I formative assignment: source code and reproducibility materials," GitHub. [Repository](https://github.com/irachrist1/ml-techniques-1-formative-1).
 
-[7] Individual project video: Recording and accessible link pending; no video is included in this version.
+[7] Individual project video: [https://youtu.be/BuK5q4nUBL0](https://youtu.be/BuK5q4nUBL0)
 
 [8] statsmodels developers, "adfuller: Augmented Dickey-Fuller unit root test," statsmodels documentation. https://www.statsmodels.org/stable/generated/statsmodels.tsa.stattools.adfuller.html.
 
